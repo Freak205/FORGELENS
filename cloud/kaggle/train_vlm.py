@@ -12,13 +12,11 @@ import datasets
 import peft
 import torch
 import transformers
-import trl
 from datasets import Image as DatasetImage
 from datasets import Dataset, load_dataset
 from PIL import Image as PILImage
-from peft import LoraConfig
-from transformers import AutoProcessor
-from trl import SFTConfig, SFTTrainer
+from peft import LoraConfig, get_peft_model
+from transformers import AutoModelForImageTextToText, AutoProcessor
 
 MODEL_ID = "HuggingFaceTB/SmolVLM2-2.2B-Instruct"
 MODEL_REVISION = "482adb537c021c86670beed01cd58990d01e72e4"
@@ -117,7 +115,7 @@ def public_cord_proxy_dataset() -> Dataset:
     return Dataset.from_list(rows)
 
 
-def balanced_test_subset(dataset: Dataset, per_class: int = 64) -> Dataset:
+def balanced_test_subset(dataset: Dataset, per_class: int = 32) -> Dataset:
     """Select a deterministic, balanced evaluation subset."""
     authentic = dataset.filter(lambda row: int(row["label"]) == 0).shuffle(
         seed=20260723
@@ -139,12 +137,14 @@ def evaluate_verdicts(model: object, processor: object, dataset: Dataset) -> dic
     targets: list[int] = []
     model.eval()
     for row in dataset:
-        messages = [row["messages"][0]]
-        inputs = processor.apply_chat_template(
-            messages,
+        prompt = processor.apply_chat_template(
+            [row["messages"][0]],
             add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
+            tokenize=False,
+        )
+        inputs = processor(
+            text=prompt,
+            images=[row["image"]],
             return_tensors="pt",
         ).to(model.device)
         output_ids = model.generate(**inputs, max_new_tokens=32, do_sample=False)
@@ -169,6 +169,77 @@ def evaluate_verdicts(model: object, processor: object, dataset: Dataset) -> dic
         "balanced_accuracy": sum(recalls) / 2,
         "authentic_recall": recalls[0],
         "forged_recall": recalls[1],
+    }
+
+
+def training_inputs(row: dict, processor: object, device: torch.device) -> dict:
+    """Encode one conversation and mask prompt tokens from the SFT loss."""
+    full_text = processor.apply_chat_template(
+        row["messages"],
+        add_generation_prompt=False,
+        tokenize=False,
+    )
+    prompt_text = processor.apply_chat_template(
+        [row["messages"][0]],
+        add_generation_prompt=True,
+        tokenize=False,
+    )
+    inputs = processor(
+        text=full_text,
+        images=[row["image"]],
+        return_tensors="pt",
+    ).to(device)
+    prompt = processor(
+        text=prompt_text,
+        images=[row["image"]],
+        return_tensors="pt",
+    )
+    labels = inputs["input_ids"].clone()
+    labels[:, : prompt["input_ids"].shape[1]] = -100
+    inputs["labels"] = labels
+    return inputs
+
+
+def train_lora(
+    model: object,
+    processor: object,
+    dataset: Dataset,
+    device: torch.device,
+    training_dtype: torch.dtype,
+) -> dict:
+    """Run one deterministic, gradient-accumulated PEFT epoch."""
+    optimizer = torch.optim.AdamW(
+        [parameter for parameter in model.parameters() if parameter.requires_grad],
+        lr=2e-4,
+    )
+    scaler = torch.amp.GradScaler(
+        "cuda",
+        enabled=training_dtype == torch.float16,
+    )
+    model.train()
+    optimizer.zero_grad(set_to_none=True)
+    losses: list[float] = []
+    accumulation = 16
+    shuffled = dataset.shuffle(seed=20260723)
+    for index, row in enumerate(shuffled):
+        inputs = training_inputs(row, processor, device)
+        with torch.autocast(
+            device_type="cuda",
+            dtype=training_dtype,
+        ):
+            loss = model(**inputs).loss / accumulation
+        scaler.scale(loss).backward()
+        losses.append(float(loss.detach().cpu()) * accumulation)
+        if (index + 1) % accumulation == 0 or index + 1 == len(shuffled):
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            scaler.step(optimizer)
+            scaler.update()
+            optimizer.zero_grad(set_to_none=True)
+    return {
+        "epochs": 1,
+        "optimizer_steps": (len(shuffled) + accumulation - 1) // accumulation,
+        "mean_train_loss": sum(losses) / len(losses),
     }
 
 
@@ -208,51 +279,26 @@ def main() -> None:
         target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
         task_type="CAUSAL_LM",
     )
-    checkpoint = OUTPUT_ROOT / "checkpoints"
-    args = SFTConfig(
-        output_dir=str(checkpoint),
-        seed=20260723,
-        num_train_epochs=1,
-        per_device_train_batch_size=1,
-        per_device_eval_batch_size=1,
-        gradient_accumulation_steps=16,
-        gradient_checkpointing=True,
-        learning_rate=2e-4,
-        warmup_ratio=0.03,
-        logging_steps=5,
-        save_steps=50,
-        eval_steps=50,
-        eval_strategy="steps",
-        save_strategy="steps",
-        save_total_limit=2,
-        load_best_model_at_end=True,
-        metric_for_best_model="eval_loss",
-        greater_is_better=False,
-        fp16=not torch.cuda.is_bf16_supported(),
-        bf16=torch.cuda.is_bf16_supported(),
-        max_length=None,
-        completion_only_loss=True,
-        report_to="none",
+    device = torch.device("cuda")
+    model = AutoModelForImageTextToText.from_pretrained(
+        MODEL_ID,
+        revision=MODEL_REVISION,
+        torch_dtype=training_dtype,
     )
-    trainer = SFTTrainer(
-        model=MODEL_ID,
-        args=args,
-        train_dataset=train_dataset,
-        eval_dataset=validation_dataset,
-        processing_class=processor,
-        peft_config=lora,
-        model_init_kwargs={
-            "revision": MODEL_REVISION,
-            "torch_dtype": training_dtype,
-            "device_map": "auto",
-        },
+    model.gradient_checkpointing_enable()
+    model = model.to(device)
+    zero_shot = evaluate_verdicts(model, processor, test_dataset)
+    model = get_peft_model(model, lora)
+    train_metrics = train_lora(
+        model,
+        processor,
+        train_dataset,
+        device,
+        training_dtype,
     )
-    zero_shot = evaluate_verdicts(trainer.model, processor, test_dataset)
-    resume = True if any(checkpoint.glob("checkpoint-*")) else None
-    result = trainer.train(resume_from_checkpoint=resume)
-    fine_tuned = evaluate_verdicts(trainer.model, processor, test_dataset)
+    fine_tuned = evaluate_verdicts(model, processor, test_dataset)
     adapter = OUTPUT_ROOT / "adapter"
-    trainer.save_model(str(adapter))
+    model.save_pretrained(str(adapter))
     processor.save_pretrained(str(adapter))
     record = {
         "experiment_id": "VLM-SFT-001",
@@ -270,11 +316,11 @@ def main() -> None:
         "train_rows": len(train_dataset),
         "validation_rows": len(validation_dataset),
         "test_evaluation": {
-            "selection": "deterministic balanced subset; 64 per class maximum",
+            "selection": "deterministic balanced subset; 32 per class maximum",
             "zero_shot": zero_shot,
             "fine_tuned": fine_tuned,
         },
-        "train_metrics": result.metrics,
+        "train_metrics": train_metrics,
         "duration_seconds": time.perf_counter() - started,
         "peak_vram_mb": torch.cuda.max_memory_allocated() / 1048576,
         "gpu": torch.cuda.get_device_name(0),
@@ -285,7 +331,6 @@ def main() -> None:
             "peft": peft.__version__,
             "torch": torch.__version__,
             "transformers": transformers.__version__,
-            "trl": trl.__version__,
         },
     }
     (OUTPUT_ROOT / "record.json").write_text(

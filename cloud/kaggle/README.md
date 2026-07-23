@@ -10,10 +10,9 @@ small deterministic copy-move proxy inside Kaggle. This avoids uploading gated
 AIForge data or credentials. An optional private `vlm_sft.jsonl` bundle is
 supported only when its upload is separately reviewed and authorized.
 
-The job uses a private Kaggle kernel with free GPU enabled, saves resumable
-checkpoints to `/kaggle/working/forgelens-output`, and emits a compact adapter
-plus `record.json`. Download all outputs back below `F:\HYPERVERGE` immediately
-after completion.
+The job uses a private Kaggle kernel with free GPU enabled and emits a compact
+adapter plus `record.json` to `/kaggle/working/forgelens-output`. Download all
+outputs back below `F:\HYPERVERGE` immediately after completion.
 
 Execution requires only Kaggle API authentication. The proxy result must not be
 reported as AI-inpainting performance.
