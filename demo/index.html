@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ForgeLens research demo</title><style>
+body{font:16px system-ui;max-width:960px;margin:40px auto;padding:0 20px;background:#0d1117;color:#e6edf3}
+.warning{border:1px solid #d29922;background:#2b2106;padding:14px;border-radius:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}img{max-width:100%;background:white}
+pre{white-space:pre-wrap;background:#161b22;padding:16px}</style>
+<h1>ForgeLens</h1><p class="warning"><strong>Research prototype—not forensic proof.</strong>
+Current checkpoint failed operational validation and defaults to manual review. Use only non-sensitive documents.</p>
+<input id="file" type="file" accept="image/png,image/jpeg,image/webp"><button id="run">Analyze locally</button>
+<div class="grid"><div><h2>Input</h2><img id="input"></div><div><h2>Predicted mask</h2><img id="mask"></div></div>
+<h2>Structured output</h2><pre id="result">Select an approved image.</pre><script>
+const f=document.querySelector("#file"),r=document.querySelector("#result");
+document.querySelector("#run").onclick=async()=>{if(!f.files[0])return;
+document.querySelector("#input").src=URL.createObjectURL(f.files[0]);r.textContent="Analyzing…";
+const q=await fetch("/predict",{method:"POST",headers:{"Content-Type":f.files[0].type},body:f.files[0]});
+const d=await q.json();r.textContent=JSON.stringify(d,null,2);if(d.mask_url)document.querySelector("#mask").src=d.mask_url;};</script></html>

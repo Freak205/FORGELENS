@@ -7,7 +7,11 @@ from PIL import Image
 from torch import Tensor
 
 from forgelens.calibration import OperatingPolicy, TemperatureScaler
-from forgelens.models import TinyJointDetector
+from forgelens.models import (
+    ResidualUNetJointDetector,
+    TinyJointDetector,
+    TinyUNetJointDetector,
+)
 from forgelens.schema import EvidenceRegion, ForgeLensOutput
 
 
@@ -22,7 +26,7 @@ def _mask_box(binary_mask: Tensor) -> tuple[int, int, int, int] | None:
 
 @torch.no_grad()
 def infer_tensor(
-    model: TinyJointDetector,
+    model: TinyJointDetector | TinyUNetJointDetector | ResidualUNetJointDetector,
     image: Tensor,
     output_mask_path: Path,
     policy: OperatingPolicy,

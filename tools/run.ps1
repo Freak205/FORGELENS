@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "benchmark-inference", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "build-cord-copy-move", "prepare-trufor")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "benchmark-inference", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "build-cord-copy-move", "prepare-trufor")]
     [string]$Task
 )
 
@@ -36,12 +36,16 @@ switch ($Task) {
         & $Uv sync --extra dev --python $Python
         if ($LASTEXITCODE -ne 0) { throw "uv sync failed" }
     }
-    "format" { Invoke-Python @("-m", "ruff", "format", "src", "tests", "scripts") }
-    "format-check" {
-        Invoke-Python @("-m", "ruff", "format", "--check", "src", "tests", "scripts")
+    "format" {
+        Invoke-Python @("-m", "ruff", "format", "src", "tests", "scripts", "demo")
     }
-    "lint" { Invoke-Python @("-m", "ruff", "check", "src", "tests", "scripts") }
-    "typecheck" { Invoke-Python @("-m", "mypy", "src", "scripts") }
+    "format-check" {
+        Invoke-Python @(
+            "-m", "ruff", "format", "--check", "src", "tests", "scripts", "demo"
+        )
+    }
+    "lint" { Invoke-Python @("-m", "ruff", "check", "src", "tests", "scripts", "demo") }
+    "typecheck" { Invoke-Python @("-m", "mypy", "src", "scripts", "demo") }
     "test" { Invoke-Python @("-m", "pytest") }
     "smoke-train" { Invoke-Python @("scripts\train_smoke.py") }
     "train-real-baseline" {
@@ -64,6 +68,7 @@ switch ($Task) {
     "benchmark-inference" {
         Invoke-Python @("scripts\benchmark_inference.py")
     }
+    "demo" { Invoke-Python @("demo\server.py") }
     "cuda" {
         Invoke-Python @(
             "-c",
