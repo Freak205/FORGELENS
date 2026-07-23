@@ -13,5 +13,5 @@ def test_kaggle_script_parses_and_metadata_is_private_gpu() -> None:
     assert metadata["is_private"] is True
     assert metadata["enable_gpu"] is True
     assert metadata["enable_internet"] is True
-    assert metadata["dataset_sources"] == ["ivsanirudh/forgelens-vlm-evidence"]
+    assert metadata["dataset_sources"] == []
     assert (root / "cloud" / "kaggle" / "requirements-vlm.txt").is_file()

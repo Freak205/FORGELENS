@@ -5,14 +5,15 @@ This job fine-tunes only a LoRA adapter for the open Apache-2.0
 `482adb537c021c86670beed01cd58990d01e72e4`. The VLM receives detector/OCR
 evidence and is not the primary forensic detector.
 
-The input bundle must contain `vlm_sft.jsonl` with authorized local image paths
-and prompt-completion messages. It must not contain credentials, real identity
-documents, biometrics, or gated data that Kaggle terms prohibit uploading.
+By default, the code-only kernel downloads pinned public CORD v2 and constructs a
+small deterministic copy-move proxy inside Kaggle. This avoids uploading gated
+AIForge data or credentials. An optional private `vlm_sft.jsonl` bundle is
+supported only when its upload is separately reviewed and authorized.
 
 The job uses a private Kaggle kernel with free GPU enabled, saves resumable
 checkpoints to `/kaggle/working/forgelens-output`, and emits a compact adapter
 plus `record.json`. Download all outputs back below `F:\HYPERVERGE` immediately
 after completion.
 
-Execution requires Kaggle login/API credentials and is intentionally not
-attempted until the evidence dataset passes licence and privacy checks.
+Execution requires only Kaggle API authentication. The proxy result must not be
+reported as AI-inpainting performance.

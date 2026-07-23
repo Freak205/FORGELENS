@@ -1,5 +1,7 @@
 """Free-GPU LoRA SFT entry point for the evidence-grounded VLM."""
 
+# ruff: noqa: E402
+
 import json
 import os
 import subprocess
@@ -24,14 +26,18 @@ subprocess.run(
 import torch
 from datasets import Image as DatasetImage
 from datasets import Dataset, load_dataset
+from PIL import Image as PILImage
 from peft import LoraConfig
 from transformers import AutoProcessor, BitsAndBytesConfig
 from trl import SFTConfig, SFTTrainer
 
 MODEL_ID = "HuggingFaceTB/SmolVLM2-2.2B-Instruct"
 MODEL_REVISION = "482adb537c021c86670beed01cd58990d01e72e4"
+CORD_REVISION = "7f0115a4b758a71d6473b8d085751692da2fef98"
 INPUT_ROOT = Path(os.environ.get("FORGELENS_INPUT", "/kaggle/input/forgelens-bundle"))
-OUTPUT_ROOT = Path(os.environ.get("FORGELENS_OUTPUT", "/kaggle/working/forgelens-output"))
+OUTPUT_ROOT = Path(
+    os.environ.get("FORGELENS_OUTPUT", "/kaggle/working/forgelens-output")
+)
 
 
 def prepare_dataset(dataset_path: Path) -> Dataset:
@@ -42,6 +48,84 @@ def prepare_dataset(dataset_path: Path) -> Dataset:
         desc="Resolving private bundle image paths",
     )
     return dataset.cast_column("image", DatasetImage())
+
+
+def messages(label: int) -> list[dict]:
+    """Return label-first supervision without personal-data inference."""
+    prompt = (
+        "Inspect this receipt for image tampering. Return exactly one verdict "
+        "(AUTHENTIC or FORGED), then one short visual-evidence sentence. Do not "
+        "infer identity or personal attributes."
+    )
+    verdict = "FORGED" if label else "AUTHENTIC"
+    evidence = (
+        "A copied image region was deterministically relocated in this proxy."
+        if label
+        else "No synthetic copied region is present in this proxy source."
+    )
+    return [
+        {
+            "role": "user",
+            "content": [{"type": "image"}, {"type": "text", "text": prompt}],
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {"type": "text", "text": f"VERDICT: {verdict}\nEVIDENCE: {evidence}"}
+            ],
+        },
+    ]
+
+
+def copy_move(image: PILImage.Image, index: int) -> PILImage.Image:
+    """Create a deterministic visible-but-localized copy-move proxy."""
+    forged = image.convert("RGB").copy()
+    width, height = forged.size
+    patch_width = max(12, width // 5)
+    patch_height = max(12, height // 10)
+    source_x = (index * 17) % max(1, width - patch_width)
+    source_y = (index * 29) % max(1, height - patch_height)
+    target_x = (source_x + width // 3) % max(1, width - patch_width)
+    target_y = (source_y + height // 3) % max(1, height - patch_height)
+    patch = forged.crop(
+        (source_x, source_y, source_x + patch_width, source_y + patch_height)
+    )
+    forged.paste(patch, (target_x, target_y))
+    return forged
+
+
+def public_cord_proxy_dataset() -> Dataset:
+    """Build a no-secret, non-gated VLM proxy directly on Kaggle."""
+    source = load_dataset(
+        "naver-clova-ix/cord-v2",
+        revision=CORD_REVISION,
+    )
+    rows: list[dict] = []
+    plan = {
+        "train": ("train", 128),
+        "validation": ("validation", 32),
+        "test": ("test", 64),
+    }
+    for output_split, (source_split, count) in plan.items():
+        selected = source[source_split].select(range(count))
+        for index, row in enumerate(selected):
+            authentic = row["image"].convert("RGB")
+            group = f"{source_split}:{index:06d}"
+            for label, image in (
+                (0, authentic),
+                (1, copy_move(authentic, index)),
+            ):
+                rows.append(
+                    {
+                        "sample_id": f"{group}:{label}",
+                        "source_group": group,
+                        "split": output_split,
+                        "label": label,
+                        "image": image,
+                        "messages": messages(label),
+                    }
+                )
+    return Dataset.from_list(rows)
 
 
 def balanced_test_subset(dataset: Dataset, per_class: int = 64) -> Dataset:
@@ -81,13 +165,16 @@ def evaluate_verdicts(model: object, processor: object, dataset: Dataset) -> dic
         targets.append(int(row["label"]))
     recalls = []
     for label in (0, 1):
-        matches = [prediction == label for prediction, target in zip(predictions, targets) if target == label]
+        matches = [
+            prediction == label
+            for prediction, target in zip(predictions, targets)
+            if target == label
+        ]
         recalls.append(sum(matches) / len(matches))
     return {
         "samples": len(targets),
         "accuracy": sum(
-            prediction == target
-            for prediction, target in zip(predictions, targets)
+            prediction == target for prediction, target in zip(predictions, targets)
         )
         / len(targets),
         "balanced_accuracy": sum(recalls) / 2,
@@ -101,15 +188,18 @@ def main() -> None:
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU is required for the VLM SFT job")
     dataset_path = INPUT_ROOT / "vlm_sft.jsonl"
-    if not dataset_path.is_file():
-        raise FileNotFoundError(dataset_path)
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("HF_HOME", str(OUTPUT_ROOT / "cache" / "huggingface"))
     os.environ.setdefault("TRANSFORMERS_CACHE", str(OUTPUT_ROOT / "cache"))
     torch.cuda.reset_peak_memory_stats()
     started = time.perf_counter()
 
-    dataset = prepare_dataset(dataset_path)
+    using_private_bundle = dataset_path.is_file()
+    dataset = (
+        prepare_dataset(dataset_path)
+        if using_private_bundle
+        else public_cord_proxy_dataset()
+    )
     train_dataset = dataset.filter(lambda row: row["split"] == "train")
     validation_dataset = dataset.filter(lambda row: row["split"] == "validation")
     test_dataset = balanced_test_subset(
@@ -189,6 +279,12 @@ def main() -> None:
         "method": "4-bit NF4 QLoRA-style PEFT SFT",
         "completion_only_loss": True,
         "dataset_rows": len(dataset),
+        "dataset": (
+            "private licensed bundle"
+            if using_private_bundle
+            else "public CORD v2 deterministic copy-move proxy"
+        ),
+        "cord_revision": None if using_private_bundle else CORD_REVISION,
         "train_rows": len(train_dataset),
         "validation_rows": len(validation_dataset),
         "test_evaluation": {
