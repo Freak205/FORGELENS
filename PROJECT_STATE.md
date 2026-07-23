@@ -9,6 +9,7 @@
   atomic checkpoints, and joint smoke training implemented; 10 tests pass
 - Active experiment: none; SMOKE-0001 completed
 - Last verified command: `.venv\Scripts\python.exe scripts\train_smoke.py`
+- Last verified Git commit: `50fde438feb396653abc0308308d01f4fd1534df`
 - Available checkpoints:
   `artifacts/experiments/SMOKE-0001/last.pt` (pipeline verification only)
 - Current metrics: smoke tests only; no research result claimed

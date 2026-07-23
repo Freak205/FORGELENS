@@ -17,9 +17,9 @@
 - Hypothesis: the joint baseline can train end-to-end on safe fixtures
 - Dataset: blank-canvas-fixtures-v1, 12 samples; no research split
 - Config: one epoch, batch 4, seed 20260723, TinyJointDetector(base=8), AdamW
-- Git commit: UNCOMMITTED (bootstrap run)
+- Git commit: `50fde438feb396653abc0308308d01f4fd1534df`
 - Hardware: RTX 2050; PyTorch 2.12.1+cu130
-- Duration: 1.150 seconds
+- Duration: 0.762 seconds on the committed rerun
 - Peak allocated VRAM: 26.55 MiB
 - Checkpoint: `artifacts/experiments/SMOKE-0001/last.pt`
 - Metrics: loss 1.3022, image F1 0.0, pixel IoU 0.0
