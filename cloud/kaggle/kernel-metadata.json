@@ -1,0 +1,14 @@
+{
+  "id": "OWNER/forgelens-vlm-sft",
+  "title": "ForgeLens VLM LoRA SFT",
+  "code_file": "train_vlm.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

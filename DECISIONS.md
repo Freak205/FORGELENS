@@ -19,3 +19,12 @@ trusted system interpreter. No global package is installed.
 Start with tiny deterministic RGB classification and segmentation baselines.
 Add residual, OCR/layout, and VLM components only after baseline failure
 analysis. This avoids unsupported architectural complexity.
+
+## D-0004 — VLM candidate
+
+Use `HuggingFaceTB/SmolVLM2-2.2B-Instruct` at revision
+`482adb537c021c86670beed01cd58990d01e72e4` for the first zero-shot and LoRA SFT
+comparison. It is Apache-2.0, 2.2B parameters, supported by Transformers/TRL,
+and sized for a free 16 GB Kaggle GPU with 4-bit loading and conservative image
+tokens. Qwen2.5-VL-3B was rejected for this portfolio route because its official
+3B checkpoint uses a non-commercial Qwen research licence.
