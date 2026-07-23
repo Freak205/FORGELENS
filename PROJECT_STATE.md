@@ -22,6 +22,9 @@
   validated 1,000 forged images, 1,000 exact masks, and 2,000 manifest rows
 - Packaging verification: 46 tests pass; localhost demo returned HTTP 200,
   strict `uncertain/manual_review`, and a mask for a licensed CORD test image
+- Report verification: actual reliability/ablation figures and three
+  qualitative failures generated; clean wheel install and isolated model
+  forward passed under `F:\HYPERVERGE\.tmp\clean-audit-605bb90`
 - Last verified Git commit before current state update:
   `3d215db` (immutable leakage-safe CORD manifest)
 - Available checkpoints:

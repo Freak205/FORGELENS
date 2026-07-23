@@ -28,6 +28,10 @@ thresholds and temperatures are selected on validation only.
 The negative results show copy-move is not a credible proxy for AI inpainting.
 Exact records and checkpoint hashes are in `results/`.
 
+![Ablation ROC-AUC with bootstrap intervals](figures/ablation_auc.svg)
+
+![Calibration reliability diagram](figures/calibration_residual.svg)
+
 ## Calibration, robustness, published and VLM baselines
 
 Temperature scaling, ECE, Brier score, abstention, bootstrap intervals, and
@@ -47,3 +51,5 @@ No current checkpoint is operationally acceptable. No AI-inpainting,
 cross-generator, VLM, or in-the-wild performance claim is made. ForgeLens is
 not forensic proof and excludes real identity documents, biometric collection,
 and operational forgery generation.
+
+Actual qualitative failures are preserved in `reports/failure_gallery.md`.

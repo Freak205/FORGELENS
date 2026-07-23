@@ -1,0 +1,17 @@
+{
+  "audit_id": "CLEAN-INSTALL-605BB90",
+  "date": "2026-07-23",
+  "storage_root": "F:/HYPERVERGE/.tmp/clean-audit-605bb90",
+  "python": "3.14.6",
+  "install_mode": "built wheel installed into new isolated virtual environment",
+  "wheel": "forgelens-0.1.0-py3-none-any.whl",
+  "wheel_bytes": 25436,
+  "wheel_sha256": "7656ebd2ced9530453d12fcc9a70d7144e5274800550565db149415542457bec",
+  "torch": "2.12.1+cpu",
+  "checks": {
+    "isolated_package_import": "passed",
+    "residual_model_construction": "passed",
+    "forward_output_shape": "passed"
+  },
+  "writes_outside_f_hyperverge": false
+}

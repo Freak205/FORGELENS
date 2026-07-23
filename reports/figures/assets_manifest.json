@@ -1,0 +1,109 @@
+{
+  "checkpoint_sha256": "18d61a4aa7c8a3f5ad87704d4726de81d2dd3348c536824bd2e9ebeaa0aa37c3",
+  "temperature": 1.0000354051589966,
+  "calibration_bins": [
+    {
+      "lower": 0.0,
+      "upper": 0.1,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.1,
+      "upper": 0.2,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.2,
+      "upper": 0.3,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.3,
+      "upper": 0.4,
+      "count": 1,
+      "confidence": 0.39921578764915466,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.4,
+      "upper": 0.5,
+      "count": 95,
+      "confidence": 0.4869968593120575,
+      "accuracy": 0.49473685026168823
+    },
+    {
+      "lower": 0.5,
+      "upper": 0.6,
+      "count": 104,
+      "confidence": 0.5032028555870056,
+      "accuracy": 0.5096153616905212
+    },
+    {
+      "lower": 0.6,
+      "upper": 0.7,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.7,
+      "upper": 0.8,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.8,
+      "upper": 0.9,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    },
+    {
+      "lower": 0.9,
+      "upper": 1.0,
+      "count": 0,
+      "confidence": 0.0,
+      "accuracy": 0.0
+    }
+  ],
+  "examples": [
+    {
+      "sample_id": "cord-test-0-copy-move",
+      "input": "reports\\figures\\failure_1_input.png",
+      "target": "reports\\figures\\failure_1_target.png",
+      "prediction": "reports\\figures\\failure_1_prediction.png"
+    },
+    {
+      "sample_id": "cord-test-1-copy-move",
+      "input": "reports\\figures\\failure_2_input.png",
+      "target": "reports\\figures\\failure_2_target.png",
+      "prediction": "reports\\figures\\failure_2_prediction.png"
+    },
+    {
+      "sample_id": "cord-test-2-copy-move",
+      "input": "reports\\figures\\failure_3_input.png",
+      "target": "reports\\figures\\failure_3_target.png",
+      "prediction": "reports\\figures\\failure_3_prediction.png"
+    }
+  ],
+  "figure_sha256": {
+    "ablation_auc.svg": "c3581c8c7adb7da85621aa31de46a45e18035d0ae9ae8ac909d52f9c3999cbda",
+    "calibration_residual.svg": "90abea6908d120a0e7209e99e2701fba177c120b46af726e87c01c4822ba7859",
+    "failure_1_input.png": "6fa12d9e6030540f11dc5c7c84d0ab23f934313b30c75722221dd7cfe7fbdb58",
+    "failure_1_prediction.png": "c542e649c7d6bce9366dd6bac0b826ae9bb904d920161f93b8abe5fa7500cbcd",
+    "failure_1_target.png": "2e69daa2abe3c4bd1a282cf5aa7d35e70817c6117e5d0ca94f1ad2369747cc98",
+    "failure_2_input.png": "449f3636de0ed74a5208069e48d672a933cbbb40ce6cbe390a274177c73bd4af",
+    "failure_2_prediction.png": "44768b059f4bd1a5803052e9aaef81801cb4cd5f5bb84eb41cd517fe28296c04",
+    "failure_2_target.png": "56d48ad1a8bc8a2dbab5437831be315b5c994c1b643b7aa17faa7f51702e5689",
+    "failure_3_input.png": "77c993be22a51b62860ef92b1bc5c95888e207328a9fdfd9c39c67924483d00a",
+    "failure_3_prediction.png": "b4308a421973e41a30288392b4825d620f497690838d371233813e255c8a1ebb",
+    "failure_3_target.png": "3b4b4a543f9622b29edd14dde029068c3db049a99e611363916c4b97123da41e"
+  }
+}

@@ -23,3 +23,11 @@ configuration, seed, Git commit, hardware record, checkpoint hash, and metrics
 record. `SMOKE-0001` verifies plumbing only and is not a scientific result.
 Published baselines are revision- and licence-pinned in
 `configs/baselines/third_party.lock.json`.
+
+## Clean-install audit
+
+Commit `605bb90` was built as a wheel and installed into a new isolated
+environment at `F:\HYPERVERGE\.tmp\clean-audit-605bb90`. An isolated package
+import, residual-model construction, and forward-shape smoke passed using the
+CPU PyTorch wheel. The wheel checksum and audit evidence are recorded in
+`reports/tables/clean_install_audit.json`.
