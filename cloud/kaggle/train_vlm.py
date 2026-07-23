@@ -8,7 +8,6 @@ import time
 from pathlib import Path
 
 import accelerate
-import bitsandbytes
 import datasets
 import peft
 import torch
@@ -18,7 +17,7 @@ from datasets import Image as DatasetImage
 from datasets import Dataset, load_dataset
 from PIL import Image as PILImage
 from peft import LoraConfig
-from transformers import AutoProcessor, BitsAndBytesConfig
+from transformers import AutoProcessor
 from trl import SFTConfig, SFTTrainer
 
 MODEL_ID = "HuggingFaceTB/SmolVLM2-2.2B-Instruct"
@@ -200,14 +199,7 @@ def main() -> None:
         revision=MODEL_REVISION,
         token=os.environ.get("HF_TOKEN"),
     )
-    quantization = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=(
-            torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-        ),
-        bnb_4bit_use_double_quant=True,
-    )
+    training_dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
     lora = LoraConfig(
         r=16,
         lora_alpha=32,
@@ -251,7 +243,7 @@ def main() -> None:
         peft_config=lora,
         model_init_kwargs={
             "revision": MODEL_REVISION,
-            "quantization_config": quantization,
+            "torch_dtype": training_dtype,
             "device_map": "auto",
         },
     )
@@ -266,7 +258,7 @@ def main() -> None:
         "experiment_id": "VLM-SFT-001",
         "model_id": MODEL_ID,
         "model_revision": MODEL_REVISION,
-        "method": "4-bit NF4 QLoRA-style PEFT SFT",
+        "method": "mixed-precision LoRA PEFT SFT",
         "completion_only_loss": True,
         "dataset_rows": len(dataset),
         "dataset": (
@@ -289,7 +281,6 @@ def main() -> None:
         "adapter_path": str(adapter),
         "runtime_versions": {
             "accelerate": accelerate.__version__,
-            "bitsandbytes": bitsandbytes.__version__,
             "datasets": datasets.__version__,
             "peft": peft.__version__,
             "torch": torch.__version__,

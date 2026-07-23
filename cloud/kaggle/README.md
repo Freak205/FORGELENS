@@ -1,6 +1,6 @@
 # Free Kaggle GPU Route
 
-This job fine-tunes only a LoRA adapter for the open Apache-2.0
+This job fine-tunes only a mixed-precision LoRA adapter for the open Apache-2.0
 `HuggingFaceTB/SmolVLM2-2.2B-Instruct` revision
 `482adb537c021c86670beed01cd58990d01e72e4`. The VLM receives detector/OCR
 evidence and is not the primary forensic detector.
