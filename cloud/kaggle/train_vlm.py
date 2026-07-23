@@ -100,9 +100,9 @@ def public_cord_proxy_dataset() -> Dataset:
     )
     rows: list[dict] = []
     plan = {
-        "train": ("train", 128),
-        "validation": ("validation", 32),
-        "test": ("test", 64),
+        "train": ("train", 64),
+        "validation": ("validation", 16),
+        "test": ("test", 16),
     }
     for output_split, (source_split, count) in plan.items():
         selected = source[source_split].select(range(count))
@@ -126,7 +126,7 @@ def public_cord_proxy_dataset() -> Dataset:
     return Dataset.from_list(rows)
 
 
-def balanced_test_subset(dataset: Dataset, per_class: int = 32) -> Dataset:
+def balanced_test_subset(dataset: Dataset, per_class: int = 8) -> Dataset:
     """Select a deterministic, balanced evaluation subset."""
     authentic = dataset.filter(lambda row: int(row["label"]) == 0).shuffle(
         seed=20260723
@@ -342,7 +342,7 @@ def main() -> None:
         "train_rows": len(train_dataset),
         "validation_rows": len(validation_dataset),
         "test_evaluation": {
-            "selection": "deterministic balanced subset; 32 per class maximum",
+            "selection": "deterministic balanced subset; 8 per class maximum",
             "zero_shot": zero_shot,
             "fine_tuned": fine_tuned,
         },
