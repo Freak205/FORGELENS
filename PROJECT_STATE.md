@@ -8,11 +8,14 @@
   threshold selection implemented; deterministic safe fixtures, grouped split,
   atomic checkpoints, joint smoke training, experiment config validation,
   ROC/PR AUC with bootstrap intervals, explicit abstention policy, strict
-  AIForge-Doc adapter, and nine deterministic corruptions implemented; 29 tests
-  pass
+  AIForge-Doc adapter, nine deterministic corruptions, secure revision-pinned
+  dataset acquisition, AMP/accumulation training engine, strict structured
+  inference, and a private free-Kaggle SmolVLM2 LoRA route implemented; 33
+  tests pass
 - Active experiment: none; SMOKE-0001 completed
-- Last verified command: `.\tools\run.ps1 verify` (29 passed; lint/type clean)
-- Last verified Git commit: `50fde438feb396653abc0308308d01f4fd1534df`
+- Last verified command: `.\tools\run.ps1 verify` (33 passed; lint/type clean)
+- Last verified Git commit before current state update:
+  `99a29c3` (free VLM route)
 - Available checkpoints:
   `artifacts/experiments/SMOKE-0001/last.pt` (pipeline verification only)
 - Current metrics: smoke tests only; no research result claimed
