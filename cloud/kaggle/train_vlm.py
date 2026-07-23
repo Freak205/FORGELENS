@@ -247,6 +247,16 @@ def train_lora(
             scaler.step(optimizer)
             scaler.update()
             optimizer.zero_grad(set_to_none=True)
+            print(
+                json.dumps(
+                    {
+                        "stage": "training",
+                        "samples": index + 1,
+                        "mean_loss": sum(losses) / len(losses),
+                    }
+                ),
+                flush=True,
+            )
     return {
         "epochs": 1,
         "optimizer_steps": (len(shuffled) + accumulation - 1) // accumulation,
@@ -297,8 +307,13 @@ def main() -> None:
         torch_dtype=training_dtype,
     )
     model.gradient_checkpointing_enable()
+    model.enable_input_require_grads()
     model = model.to(device)
     zero_shot = evaluate_verdicts(model, processor, test_dataset)
+    print(
+        json.dumps({"stage": "zero_shot_complete", "metrics": zero_shot}),
+        flush=True,
+    )
     model = get_peft_model(model, lora)
     train_metrics = train_lora(
         model,
