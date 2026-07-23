@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2", "download-cord", "extract-cord")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord")]
     [string]$Task
 )
 
@@ -64,6 +64,9 @@ switch ($Task) {
         if ($LASTEXITCODE -ne 0) { throw "npm dependency install failed" }
         & "F:\node\node.exe" (Join-Path $ProjectRoot "scripts\extract_cord.mjs")
         if ($LASTEXITCODE -ne 0) { throw "CORD extraction failed" }
+    }
+    "manifest-cord" {
+        Invoke-Python @("scripts\build_cord_manifest.py")
     }
     "verify" {
         & $PSCommandPath "format-check"
