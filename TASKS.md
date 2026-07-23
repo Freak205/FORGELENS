@@ -2,7 +2,7 @@
 
 - [x] M0 environment, repository, persistent state, compute assessment
 - [x] M1 dataset/licence register and safe tiny fixtures
-- [ ] M2 training/evaluation infrastructure
+- [x] M2 training/evaluation infrastructure
 - [ ] M3 classification, localization, published, and zero-shot VLM baselines
 - [ ] M4 calibration and abstention study
 - [ ] M5 evidence-driven multimodal model and ablations

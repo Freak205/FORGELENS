@@ -37,3 +37,12 @@ machine. Use pinned MIT-licensed `hyparquet` 1.26.2 and
 `hyparquet-compressors` 1.1.1 under the trusted system Node runtime to extract
 the embedded images. Every output image receives a SHA-256 entry and official
 train/validation/test splits remain unchanged.
+
+## D-0006 — Published baseline isolation
+
+Pin TruFor to official commit
+`ae54475df6f41a491d7615100feb19263dec13f7` and run it only in its upstream
+Docker environment. Its free licence is limited to informational and nonprofit
+use. Do not redistribute the source or weights, do not use an unverified weight
+mirror, and do not load its pickle-based checkpoint inside the ForgeLens
+environment.

@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "prepare-trufor")]
     [string]$Task
 )
 
@@ -67,6 +67,9 @@ switch ($Task) {
     }
     "manifest-cord" {
         Invoke-Python @("scripts\build_cord_manifest.py")
+    }
+    "prepare-trufor" {
+        Invoke-Python @("scripts\prepare_trufor_inputs.py", "--split", "test")
     }
     "verify" {
         & $PSCommandPath "format-check"

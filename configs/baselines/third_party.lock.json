@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "baselines": {
+    "trufor": {
+      "repository": "https://github.com/grip-unina/TruFor.git",
+      "commit": "ae54475df6f41a491d7615100feb19263dec13f7",
+      "local_checkout": "../third_party/TruFor",
+      "code_licence": "informational and nonprofit use only",
+      "code_licence_sha256": "07201e07e3d2c1ac55480037a87734fcccacbb0cd0e25a31e3b89ac7ffadf8b4",
+      "cmx_licence_sha256": "687ff4d0ea13200541df7359799a08c2db626094ecacbb8a3fe63ffad177f2a1",
+      "weights_url": "https://www.grip.unina.it/download/prog/TruFor/TruFor_weights.zip",
+      "weights_md5_from_official_readme": "7bee48f3476c75616c3c5721ab256ff8",
+      "execution": "isolated upstream Docker environment",
+      "status": "source pinned; official weights host unreachable on 2026-07-23"
+    }
+  }
+}

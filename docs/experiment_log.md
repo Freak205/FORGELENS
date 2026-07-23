@@ -45,6 +45,22 @@
 - Decision: CORD is approved as the first authentic receipt corpus. Do not
   alter official splits.
 
+## BASELINE-0001 — TruFor reproduction preparation
+
+- Timestamp: 2026-07-23
+- Hypothesis: the official published baseline can be evaluated through a
+  revision-pinned, licence-aware adapter without contaminating ForgeLens
+- Source: `grip-unina/TruFor` commit
+  `ae54475df6f41a491d7615100feb19263dec13f7`
+- Licence: free informational/nonprofit use only; notices and attribution
+  required
+- Split manifest: CORD v2 official test split, 100 checksum-carrying inputs
+- Result: strict `.npz` normalization implemented; 40 project checks pass
+- Failure: official weights host timed out through both PowerShell and curl
+- Decision: retain the official URL and MD5, reject unverified mirrors, and run
+  the old upstream stack in an isolated container when official weights become
+  reachable; do not claim baseline metrics before paired forged data exists
+
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
 peak VRAM, checkpoint, metrics, observations, failures, and decision.
