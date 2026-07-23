@@ -4,30 +4,16 @@
 
 import json
 import os
-import subprocess
-import sys
 import time
 from pathlib import Path
 
-subprocess.run(
-    [
-        sys.executable,
-        "-m",
-        "pip",
-        "install",
-        "--quiet",
-        "accelerate==1.14.0",
-        "bitsandbytes==0.49.2",
-        "datasets==5.0.0",
-        "huggingface-hub==1.24.0",
-        "peft==0.19.1",
-        "transformers==5.14.1",
-        "trl==1.9.0",
-    ],
-    check=True,
-)
-
+import accelerate
+import bitsandbytes
+import datasets
+import peft
 import torch
+import transformers
+import trl
 from datasets import Image as DatasetImage
 from datasets import Dataset, load_dataset
 from PIL import Image as PILImage
@@ -301,6 +287,15 @@ def main() -> None:
         "peak_vram_mb": torch.cuda.max_memory_allocated() / 1048576,
         "gpu": torch.cuda.get_device_name(0),
         "adapter_path": str(adapter),
+        "runtime_versions": {
+            "accelerate": accelerate.__version__,
+            "bitsandbytes": bitsandbytes.__version__,
+            "datasets": datasets.__version__,
+            "peft": peft.__version__,
+            "torch": torch.__version__,
+            "transformers": transformers.__version__,
+            "trl": trl.__version__,
+        },
     }
     (OUTPUT_ROOT / "record.json").write_text(
         json.dumps(record, indent=2), encoding="utf-8"
