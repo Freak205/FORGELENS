@@ -35,6 +35,7 @@ CPU PyTorch wheel. The wheel checksum and audit evidence are recorded in
 ## Credentials
 
 Accept gated dataset terms in the browser, then run
-`.\tools\setup-secrets.ps1`. Credentials are encrypted with Windows DPAPI for
-the current Windows user and stored only below `F:\HYPERVERGE\secrets`.
-Plaintext secrets are never committed or logged.
+`.\tools\setup-secrets.ps1`. It accepts Hugging Face read tokens and Kaggle's
+current API-token format through hidden prompts. Credentials are encrypted with
+Windows DPAPI for the current Windows user and stored only below
+`F:\HYPERVERGE\secrets`. Plaintext secrets are never committed or logged.
