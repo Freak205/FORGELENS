@@ -57,3 +57,12 @@ licence-filtered AIForge-Doc subset for GenAI distribution shift. DocTamper is a
 published reference/reproduction target but its gated dataset is not assumed
 available. FantasyID is deferred because its real-person faces conflict with the
 project's conservative no-biometric posture.
+
+## Authentic source corpus
+
+CORD v2 is selected as the first authentic receipt source. Official metadata
+identifies a CC BY 4.0 licence, 800 train, 100 validation, and 100 test images.
+ForgeLens pins revision
+`7f0115a4b758a71d6473b8d085751692da2fef98` and preserves official splits.
+Its accession record is stored beside local data; attribution must appear in
+the final report and README.

@@ -10,16 +10,18 @@
   ROC/PR AUC with bootstrap intervals, explicit abstention policy, strict
   AIForge-Doc adapter, nine deterministic corruptions, secure revision-pinned
   dataset acquisition, AMP/accumulation training engine, strict structured
-  inference, and a private free-Kaggle SmolVLM2 LoRA route implemented; 33
-  tests pass
+  inference, and a private free-Kaggle SmolVLM2 LoRA route implemented; CORD v2
+  is revision-pinned, downloaded, extracted, checksummed,
+  and adapted with 800/100/100 official split counts; 36 tests pass
 - Active experiment: none; SMOKE-0001 completed
-- Last verified command: `.\tools\run.ps1 verify` (33 passed; lint/type clean)
+- Last verified command: real CORD adapter load (800 rows, RGB 256×256, authentic
+  label and empty mask verified) after `.\tools\run.ps1 verify` (36 passed)
 - Last verified Git commit before current state update:
-  `99a29c3` (free VLM route)
+  `bf4b32d` (strict structured inference)
 - Available checkpoints:
   `artifacts/experiments/SMOKE-0001/last.pt` (pipeline verification only)
 - Current metrics: smoke tests only; no research result claimed
-- Next action: implement the authentic-source adapters and end-to-end baseline
-  trainer while awaiting AIForge-Doc v2 read access
+- Next action: generate immutable paired split manifests and execute the first
+  real CORD/AIForge baseline as soon as AIForge-Doc v2 read access arrives
 - User blockers: accept free AIForge-Doc v2 terms and provide a read-only
   Hugging Face token for genuine dataset training

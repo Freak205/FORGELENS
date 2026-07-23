@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "Pinned pure-JavaScript CORD Parquet extraction dependencies",
+  "dependencies": {
+    "hyparquet": "1.26.2",
+    "hyparquet-compressors": "1.1.1"
+  }
+}

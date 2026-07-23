@@ -28,3 +28,12 @@ comparison. It is Apache-2.0, 2.2B parameters, supported by Transformers/TRL,
 and sized for a free 16 GB Kaggle GPU with 4-bit loading and conservative image
 tokens. Qwen2.5-VL-3B was rejected for this portfolio route because its official
 3B checkpoint uses a non-commercial Qwen research licence.
+
+## D-0005 — Local CORD extraction
+
+The CORD v2 Hugging Face snapshot is stored as Parquet. PyArrow 25's unsigned
+`_dataset` extension was blocked by Windows Application Control on this
+machine. Use pinned MIT-licensed `hyparquet` 1.26.2 and
+`hyparquet-compressors` 1.1.1 under the trusted system Node runtime to extract
+the embedded images. Every output image receives a SHA-256 entry and official
+train/validation/test splits remain unchanged.

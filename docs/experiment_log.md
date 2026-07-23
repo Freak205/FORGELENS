@@ -29,6 +29,22 @@
 - Decision: proceed to full experiment configuration and real approved data
   adapter; do not tune against this fixture.
 
+## DATA-0001 — CORD v2 accession and extraction
+
+- Timestamp: 2026-07-23
+- Dataset: `naver-clova-ix/cord-v2`
+- Revision: `7f0115a4b758a71d6473b8d085751692da2fef98`
+- Licence: CC BY 4.0 according to official dataset metadata
+- Download: six Parquet shards, 2,307,284,272 bytes total
+- Extracted: 800 train, 100 validation, 100 test images with matching JSONL
+  provenance rows and per-image SHA-256
+- Failure: PyArrow 25 could not load its unsigned `_dataset` extension under
+  Windows Application Control.
+- Resolution: pinned pure-JavaScript/WASM Parquet extraction; exact counts
+  verified after correcting train-manifest append behavior.
+- Decision: CORD is approved as the first authentic receipt corpus. Do not
+  alter official splits.
+
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
 peak VRAM, checkpoint, metrics, observations, failures, and decision.

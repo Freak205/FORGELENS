@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2", "download-cord", "extract-cord")]
     [string]$Task
 )
 
@@ -52,6 +52,18 @@ switch ($Task) {
     }
     "download-aiforge-v2" {
         Invoke-Python @("scripts\download_aiforge.py", "v2")
+    }
+    "download-cord" {
+        Invoke-Python @("scripts\download_cord.py")
+    }
+    "extract-cord" {
+        $NodeRoot = Join-Path $StorageRoot "tools\node"
+        $env:npm_config_cache = Join-Path $StorageRoot ".cache\npm"
+        & "F:\node\npm.cmd" install --prefix $NodeRoot --package-lock=true `
+            --save-exact hyparquet@1.26.2 hyparquet-compressors@1.1.1
+        if ($LASTEXITCODE -ne 0) { throw "npm dependency install failed" }
+        & "F:\node\node.exe" (Join-Path $ProjectRoot "scripts\extract_cord.mjs")
+        if ($LASTEXITCODE -ne 0) { throw "CORD extraction failed" }
     }
     "verify" {
         & $PSCommandPath "format-check"
