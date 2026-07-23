@@ -1,0 +1,8 @@
+experiment_id: smoke-tiny-joint
+seed: 20260723
+device: auto
+epochs: 1
+batch_size: 2
+image_size: [64, 96]
+mixed_precision: false
+gradient_accumulation_steps: 1

@@ -1,0 +1,6 @@
+name: tiny_joint
+input_channels: 3
+base_channels: 16
+heads:
+  classification: true
+  localization: true

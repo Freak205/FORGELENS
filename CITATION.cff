@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use ForgeLens, cite this software and the upstream datasets/models."
+title: "ForgeLens"
+type: software
+version: 0.1.0
+date-released: 2026-07-23
+license: Apache-2.0
+repository-code: "https://github.com/OWNER/forgelens"
+abstract: >-
+  Research software for calibrated and explainable multimodal document forgery
+  detection under distribution shift. No research result is claimed before
+  verified experiment artifacts exist.
