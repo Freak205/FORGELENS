@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from forgelens.evaluation import binary_metrics
+from forgelens.evaluation.metrics import pixel_iou
 
 
 def expected_calibration_error(
@@ -48,3 +49,26 @@ def validation_optimal_threshold(
             best_threshold = threshold
             best_f1 = f1
     return best_threshold, best_f1
+
+
+def validation_optimal_pixel_threshold(
+    probabilities: Tensor,
+    targets: Tensor,
+    steps: int = 101,
+) -> tuple[float, float]:
+    """Select a localization IoU threshold using validation masks only."""
+    if probabilities.shape != targets.shape or probabilities.ndim != 4:
+        raise ValueError(
+            "pixel probabilities and targets must be matching BCHW tensors"
+        )
+    if steps < 2:
+        raise ValueError("steps must be at least two")
+    best_threshold = 0.5
+    best_iou = -1.0
+    for threshold_tensor in torch.linspace(0.0, 1.0, steps):
+        threshold = float(threshold_tensor.item())
+        iou = pixel_iou(probabilities, targets, threshold)
+        if iou >= best_iou:
+            best_threshold = threshold
+            best_iou = iou
+    return best_threshold, best_iou

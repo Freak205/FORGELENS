@@ -1,0 +1,22 @@
+{
+  "experiment_id": "UNET-COPYMOVE-001",
+  "status": "completed_rejected_baseline",
+  "git_commit": "a578c316e5504def7622cf8e1f059240a0e4a95c",
+  "seed": 20260723,
+  "dataset": "forgelens/cord-copy-move-v1",
+  "model": "TinyUNetJointDetector(base_channels=12)",
+  "best_epoch": 3,
+  "duration_seconds": 102.75125319999643,
+  "peak_vram_mb": 320.30517578125,
+  "test": {
+    "roc_auc": 0.5090000033378601,
+    "roc_auc_95_ci": [0.435971200466156, 0.5869935750961304],
+    "pr_auc": 0.5159230041503906,
+    "pr_auc_95_ci": [0.4288102388381958, 0.6135433912277222],
+    "false_positive_rate": 1.0,
+    "forged_pixel_iou_at_0_5": 0.0
+  },
+  "checkpoint_sha256": "8c4520764b7bfa2f065c68af518f3abc29feea536b6c3554fa5dba55aa86c358",
+  "decision": "Reject: no reliable ranking or fixed-threshold localization signal. Test higher resolution and fixed forensic residuals.",
+  "limitations": "Traditional deterministic copy-move benchmark only; no AI-inpainting or in-the-wild claim."
+}

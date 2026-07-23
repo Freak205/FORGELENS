@@ -3,6 +3,7 @@
 from forgelens.calibration.metrics import (
     brier_score,
     expected_calibration_error,
+    validation_optimal_pixel_threshold,
     validation_optimal_threshold,
 )
 from forgelens.calibration.policy import OperatingPolicy
@@ -13,5 +14,6 @@ __all__ = [
     "OperatingPolicy",
     "brier_score",
     "expected_calibration_error",
+    "validation_optimal_pixel_threshold",
     "validation_optimal_threshold",
 ]

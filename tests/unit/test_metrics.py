@@ -4,6 +4,7 @@ import torch
 from forgelens.calibration import (
     brier_score,
     expected_calibration_error,
+    validation_optimal_pixel_threshold,
     validation_optimal_threshold,
 )
 from forgelens.evaluation import binary_metrics, pixel_iou
@@ -30,3 +31,15 @@ def test_calibration_metrics_and_threshold() -> None:
     threshold, f1 = validation_optimal_threshold(probabilities, targets, steps=11)
     assert threshold == pytest.approx(0.8)
     assert f1 == pytest.approx(1.0)
+
+
+def test_validation_optimal_pixel_threshold() -> None:
+    probabilities = torch.tensor([[[[0.1, 0.3], [0.7, 0.9]]]])
+    targets = torch.tensor([[[[0, 0], [1, 1]]]])
+    threshold, iou = validation_optimal_pixel_threshold(
+        probabilities,
+        targets,
+        steps=11,
+    )
+    assert threshold == pytest.approx(0.7)
+    assert iou == pytest.approx(1.0)

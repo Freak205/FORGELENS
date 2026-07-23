@@ -15,8 +15,8 @@
   and adapted with 800/100/100 official split counts; TruFor source and
   licences pinned, strict output adapter implemented; deterministic 2,000-row
   CORD copy-move benchmark and real GPU training path prepared; 43 tests pass
-- Active experiment: `RGB-COPYMOVE-001` completed and rejected; test ROC-AUC
-  0.548 [0.468, 0.628], 99% false-positive rate, pixel IoU 0.191
+- Active experiment: `UNET-COPYMOVE-001` completed and rejected; test ROC-AUC
+  0.509 [0.436, 0.587], 100% false-positive rate, fixed pixel IoU 0.0
 - Last verified command: `.\tools\run.ps1 verify` (43 passed); generated and
   validated 1,000 forged images, 1,000 exact masks, and 2,000 manifest rows
 - Last verified Git commit before current state update:
@@ -24,7 +24,7 @@
 - Available checkpoints:
   `artifacts/experiments/SMOKE-0001/last.pt` (pipeline verification only)
 - Current metrics: smoke tests only; no research result claimed
-- Next action: implement and run a skip-connected localization-first baseline,
-  then obtain paired AIForge/CORD samples and run published/VLM comparisons
+- Next action: run higher-resolution fixed-residual U-Net with validation-only
+  pixel thresholding, then obtain AIForge access for the primary benchmark
 - User blockers: accept free AIForge-Doc v2 terms and provide a read-only
   Hugging Face token for genuine dataset training

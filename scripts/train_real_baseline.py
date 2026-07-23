@@ -21,6 +21,7 @@ from forgelens.calibration import (
     TemperatureScaler,
     brier_score,
     expected_calibration_error,
+    validation_optimal_pixel_threshold,
     validation_optimal_threshold,
 )
 from forgelens.config import ExperimentConfig
@@ -32,12 +33,16 @@ from forgelens.evaluation import (
     pr_auc,
     roc_auc,
 )
-from forgelens.models import TinyJointDetector, TinyUNetJointDetector
+from forgelens.models import (
+    ResidualUNetJointDetector,
+    TinyJointDetector,
+    TinyUNetJointDetector,
+)
 from forgelens.training import load_checkpoint, save_checkpoint, seed_everything
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG_PATH = PROJECT_ROOT / "configs" / "training" / "cord_copy_move_rgb.yaml"
-JointModel = TinyJointDetector | TinyUNetJointDetector
+JointModel = TinyJointDetector | TinyUNetJointDetector | ResidualUNetJointDetector
 
 
 class CachedDocumentDataset(Dataset[DocumentSample]):
@@ -211,8 +216,10 @@ def main() -> None:
     model: JointModel
     if config.model_name == "tiny_joint":
         model = TinyJointDetector(config.base_channels)
-    else:
+    elif config.model_name == "tiny_unet_joint":
         model = TinyUNetJointDetector(config.base_channels)
+    else:
+        model = ResidualUNetJointDetector(config.base_channels)
     model = model.to(device)
     optimizer = AdamW(
         model.parameters(),
@@ -264,7 +271,12 @@ def main() -> None:
             )
 
     load_checkpoint(output_directory / "best.pt", model, optimizer)
-    validation_logits, validation_labels, _, _ = predict(
+    (
+        validation_logits,
+        validation_labels,
+        validation_mask_probabilities,
+        validation_masks,
+    ) = predict(
         model,
         loaders["validation"],
         device,
@@ -276,6 +288,11 @@ def main() -> None:
     threshold, validation_f1 = validation_optimal_threshold(
         validation_probabilities,
         validation_labels,
+    )
+    validation_forged = validation_labels.bool()
+    pixel_threshold, validation_pixel_iou = validation_optimal_pixel_threshold(
+        validation_mask_probabilities[validation_forged],
+        validation_masks[validation_forged],
     )
     test_logits, test_labels, test_mask_probabilities, test_masks = predict(
         model,
@@ -303,6 +320,8 @@ def main() -> None:
     metrics: dict[str, Any] = {
         "validation_selected_threshold": threshold,
         "validation_f1": validation_f1,
+        "validation_selected_pixel_threshold": pixel_threshold,
+        "validation_pixel_iou": validation_pixel_iou,
         "temperature": float(temperature.temperature.item()),
         "test": {
             "roc_auc": asdict(roc_interval),
@@ -316,6 +335,11 @@ def main() -> None:
             "forged_pixel_iou_at_0_5": pixel_iou(
                 test_mask_probabilities[forged],
                 test_masks[forged],
+            ),
+            "forged_pixel_iou_at_validation_threshold": pixel_iou(
+                test_mask_probabilities[forged],
+                test_masks[forged],
+                pixel_threshold,
             ),
         },
         "duration_seconds": time.perf_counter() - started,

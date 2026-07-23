@@ -65,9 +65,9 @@ class TinyJointDetector(nn.Module):
 class TinyUNetJointDetector(nn.Module):
     """Skip-connected localizer with explicit top-region evidence pooling."""
 
-    def __init__(self, base_channels: int = 16) -> None:
+    def __init__(self, base_channels: int = 16, input_channels: int = 3) -> None:
         super().__init__()
-        self.encoder1 = ConvBlock(3, base_channels)
+        self.encoder1 = ConvBlock(input_channels, base_channels)
         self.encoder2 = ConvBlock(base_channels, base_channels * 2)
         self.bottleneck = ConvBlock(base_channels * 2, base_channels * 4)
         self.pool = nn.MaxPool2d(2)
@@ -77,9 +77,13 @@ class TinyUNetJointDetector(nn.Module):
         self.global_classifier = nn.Linear(base_channels * 4, 1)
         self.evidence_fusion = nn.Linear(2, 1)
 
+    def input_features(self, images: Tensor) -> Tensor:
+        """Return model inputs; subclasses may add forensic evidence channels."""
+        return images
+
     def forward(self, images: Tensor) -> DetectorOutput:
         """Fuse global context with the strongest one percent of local evidence."""
-        encoder1 = self.encoder1(images)
+        encoder1 = self.encoder1(self.input_features(images))
         encoder2 = self.encoder2(self.pool(encoder1))
         bottleneck = self.bottleneck(self.pool(encoder2))
         up2 = functional.interpolate(
@@ -106,3 +110,31 @@ class TinyUNetJointDetector(nn.Module):
             torch.stack((global_score, local_score), dim=1)
         ).squeeze(1)
         return DetectorOutput(image_logits=image_logits, mask_logits=mask_logits)
+
+
+class ResidualUNetJointDetector(TinyUNetJointDetector):
+    """U-Net baseline augmented with fixed Laplacian and gradient residuals."""
+
+    residual_kernels: Tensor
+
+    def __init__(self, base_channels: int = 16) -> None:
+        super().__init__(base_channels, input_channels=6)
+        kernels = torch.tensor(
+            [
+                [[0.0, -1.0, 0.0], [-1.0, 4.0, -1.0], [0.0, -1.0, 0.0]],
+                [[-1.0, 0.0, 1.0], [-2.0, 0.0, 2.0], [-1.0, 0.0, 1.0]],
+                [[-1.0, -2.0, -1.0], [0.0, 0.0, 0.0], [1.0, 2.0, 1.0]],
+            ]
+        ).unsqueeze(1)
+        self.register_buffer("residual_kernels", kernels)
+
+    def input_features(self, images: Tensor) -> Tensor:
+        grayscale = (
+            0.2989 * images[:, 0:1] + 0.5870 * images[:, 1:2] + 0.1140 * images[:, 2:3]
+        )
+        residuals = functional.conv2d(
+            grayscale,
+            self.residual_kernels,
+            padding=1,
+        ).tanh()
+        return torch.cat((images, residuals), dim=1)

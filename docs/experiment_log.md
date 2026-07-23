@@ -82,6 +82,24 @@
 - Decision: reject operationally and test a skip-connected localizer with
   explicit top-region evidence aggregation
 
+## UNET-COPYMOVE-001 — localization-first RGB ablation
+
+- Timestamp: 2026-07-23
+- Hypothesis: skip connections and top-region pooling recover local evidence
+  lost by global average pooling
+- Dataset/config: same locked split and seed as `RGB-COPYMOVE-001`; 128×192,
+  five epochs, batch 12, TinyUNetJointDetector(base=12)
+- Git commit: `a578c316e5504def7622cf8e1f059240a0e4a95c`
+- Duration and peak VRAM: 102.75 seconds after one-time RAM cache, 320.31 MiB
+- Test: ROC-AUC 0.509 [0.436, 0.587], PR-AUC 0.516 [0.429, 0.614],
+  fixed-threshold pixel IoU 0.0, false-positive rate 1.0
+- Failure: downsampling likely erased thin paste-boundary evidence; fixed 0.5
+  pixel threshold was not validation-selected
+- Checkpoint SHA-256:
+  `8c4520764b7bfa2f065c68af518f3abc29feea536b6c3554fa5dba55aa86c358`
+- Decision: reject and test higher-resolution fixed high-pass residual evidence;
+  add validation-only localization threshold selection
+
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
 peak VRAM, checkpoint, metrics, observations, failures, and decision.
