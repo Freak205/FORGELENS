@@ -31,3 +31,10 @@ environment at `F:\HYPERVERGE\.tmp\clean-audit-605bb90`. An isolated package
 import, residual-model construction, and forward-shape smoke passed using the
 CPU PyTorch wheel. The wheel checksum and audit evidence are recorded in
 `reports/tables/clean_install_audit.json`.
+
+## Credentials
+
+Accept gated dataset terms in the browser, then run
+`.\tools\setup-secrets.ps1`. Credentials are encrypted with Windows DPAPI for
+the current Windows user and stored only below `F:\HYPERVERGE\secrets`.
+Plaintext secrets are never committed or logged.

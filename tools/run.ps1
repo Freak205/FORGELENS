@@ -31,6 +31,15 @@ function Invoke-Python {
     }
 }
 
+function Import-DpapiSecret {
+    param([string]$Path)
+    if (-not (Test-Path -LiteralPath $Path)) {
+        throw "Missing encrypted credential: $Path. Run .\tools\setup-secrets.ps1"
+    }
+    $SecureValue = Get-Content -LiteralPath $Path | ConvertTo-SecureString
+    return [System.Net.NetworkCredential]::new("", $SecureValue).Password
+}
+
 switch ($Task) {
     "sync" {
         & $Uv sync --extra dev --python $Python
@@ -77,7 +86,21 @@ switch ($Task) {
         )
     }
     "download-aiforge-v2" {
-        Invoke-Python @("scripts\download_aiforge.py", "v2")
+        $ImportedHfToken = $false
+        if (-not $env:HF_TOKEN) {
+            $env:HF_TOKEN = Import-DpapiSecret (
+                Join-Path $StorageRoot "secrets\hf_token.dpapi"
+            )
+            $ImportedHfToken = $true
+        }
+        try {
+            Invoke-Python @("scripts\download_aiforge.py", "v2")
+        }
+        finally {
+            if ($ImportedHfToken) {
+                Remove-Item Env:HF_TOKEN -ErrorAction SilentlyContinue
+            }
+        }
     }
     "download-cord" {
         Invoke-Python @("scripts\download_cord.py")
