@@ -1,9 +1,9 @@
 .venv/
 .cache/
-data/
-artifacts/
-checkpoints/
-outputs/
+/data/
+/artifacts/
+/checkpoints/
+/outputs/
 *.py[cod]
 __pycache__/
 .pytest_cache/
