@@ -4,8 +4,15 @@
 
 import json
 import os
+import subprocess
+import sys
 import time
 from pathlib import Path
+
+subprocess.run(
+    [sys.executable, "-m", "pip", "install", "--quiet", "num2words==0.5.14"],
+    check=True,
+)
 
 import accelerate
 import datasets
@@ -249,8 +256,8 @@ def main() -> None:
         raise RuntimeError("CUDA GPU is required for the VLM SFT job")
     dataset_path = INPUT_ROOT / "vlm_sft.jsonl"
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
-    os.environ.setdefault("HF_HOME", str(OUTPUT_ROOT / "cache" / "huggingface"))
-    os.environ.setdefault("TRANSFORMERS_CACHE", str(OUTPUT_ROOT / "cache"))
+    os.environ.setdefault("HF_HOME", "/kaggle/temp/huggingface")
+    os.environ.setdefault("TRANSFORMERS_CACHE", "/kaggle/temp/transformers")
     torch.cuda.reset_peak_memory_stats()
     started = time.perf_counter()
 

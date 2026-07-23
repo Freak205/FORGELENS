@@ -162,7 +162,7 @@ switch ($Task) {
                 "kaggle-push-kernel" {
                     & $Kaggle kernels push -p (
                         Join-Path $ProjectRoot "cloud\kaggle"
-                    ) --accelerator NvidiaTeslaP100
+                    ) --accelerator NvidiaTeslaT4
                 }
                 "kaggle-download-output" {
                     $Destination = Join-Path (
