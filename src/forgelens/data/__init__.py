@@ -2,6 +2,7 @@
 
 from forgelens.data.aiforge import AIForgeDocForgeryDataset
 from forgelens.data.cord import CordAuthenticDataset
+from forgelens.data.manifest import ManifestDocumentDataset
 from forgelens.data.fixtures import FictionalDocumentFixtures
 from forgelens.data.splits import GroupedSplit, grouped_split
 from forgelens.data.types import DocumentSample
@@ -9,6 +10,7 @@ from forgelens.data.types import DocumentSample
 __all__ = [
     "AIForgeDocForgeryDataset",
     "CordAuthenticDataset",
+    "ManifestDocumentDataset",
     "DocumentSample",
     "FictionalDocumentFixtures",
     "GroupedSplit",

@@ -9,7 +9,7 @@ split strategy, and leakage risks are verified.
 | Asset | Status | Official source | Licence/access | Decision |
 |---|---|---|---|---|
 | AIForge-Doc v1 | candidate | [paper](https://arxiv.org/abs/2602.20569), [dataset card](https://huggingface.co/datasets/Scam-AI/AIForge-Doc-v1) | derived from CORD, WildReceipt, SROIE, XFUND; source-specific terms require per-subset enforcement | promising primary GenAI benchmark; do not download until provenance manifest is audited |
-| AIForge-Doc v2 | gated | [dataset card](https://huggingface.co/datasets/Scam-AI/AIForge-Doc-v2) | Hugging Face API reports `gated: auto`; dataset card states CC BY 4.0, while underlying SROIE retains research-use terms | user acceptance and read token required; adapter will filter by source licence |
+| AIForge-Doc v2 | gated | [dataset card](https://huggingface.co/datasets/Scam-AI/AIForge-Doc-v2) | Hugging Face API reports `gated: auto`; card body says CC BY 4.0, front matter says CC BY-NC-SA 4.0, gate says academic/non-commercial, and source terms vary | treat as non-commercial research only; user acceptance and read token required; filter by source licence |
 | FantasyID | candidate | [official page](https://www.idiap.ch/paper/fantasyid/) | official page states public commercial/non-commercial availability; exact archive licence file still required | strong safe-design shift set; contains permissively sourced real faces, so privacy/biometric review is required before use |
 | DocTamper | gated | [official repository](https://github.com/qcf-568/DocTamper) | non-commercial; university/research-institute application and signed form required | cannot be used locally without eligibility and approval; code/weights licence also requires file-level audit |
 | T-SROIE | candidate | [upstream repository](https://github.com/wangyuxin87/Tampered_sroie) | exact dataset licence not yet located; SROIE carries research-use terms | do not use until upstream licence and redistribution chain are verified |
@@ -66,3 +66,15 @@ ForgeLens pins revision
 `7f0115a4b758a71d6473b8d085751692da2fef98` and preserves official splits.
 Its accession record is stored beside local data; attribution must appear in
 the final report and README.
+
+## Derived traditional-tampering benchmark
+
+`forgelens/cord-copy-move-v1` contains one deterministic copy-move derivative
+and exact binary target mask for each of the 1,000 pinned CORD images. It also
+indexes the authentic source, producing 2,000 balanced samples while retaining
+CORD's official 1,600/200/200 train/validation/test sample counts. Each
+authentic/forged pair shares a source group and cannot cross splits. This is a
+traditional-tampering engineering benchmark, not a substitute for AIForge's
+AI-inpainting evaluation. Generated assets remain below
+`F:\HYPERVERGE\data\cord-copy-move-v1`; checksums and provenance are locked in
+`configs/data/cord_copy_move_v1.json`.

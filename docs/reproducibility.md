@@ -14,6 +14,8 @@ forces uv, temporary, Hugging Face, Torch, and XDG caches below
 .\tools\run.ps1 verify
 .\tools\run.ps1 smoke-train
 .\tools\run.ps1 prepare-trufor
+.\tools\run.ps1 build-cord-copy-move
+.\tools\run.ps1 train-real-baseline
 ```
 
 Research experiments must add an immutable split manifest, resolved

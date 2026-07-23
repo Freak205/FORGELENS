@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "prepare-trufor")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "build-cord-copy-move", "prepare-trufor")]
     [string]$Task
 )
 
@@ -44,6 +44,9 @@ switch ($Task) {
     "typecheck" { Invoke-Python @("-m", "mypy", "src", "scripts") }
     "test" { Invoke-Python @("-m", "pytest") }
     "smoke-train" { Invoke-Python @("scripts\train_smoke.py") }
+    "train-real-baseline" {
+        Invoke-Python @("scripts\train_real_baseline.py")
+    }
     "cuda" {
         Invoke-Python @(
             "-c",
@@ -67,6 +70,9 @@ switch ($Task) {
     }
     "manifest-cord" {
         Invoke-Python @("scripts\build_cord_manifest.py")
+    }
+    "build-cord-copy-move" {
+        Invoke-Python @("scripts\build_cord_copy_move.py")
     }
     "prepare-trufor" {
         Invoke-Python @("scripts\prepare_trufor_inputs.py", "--split", "test")

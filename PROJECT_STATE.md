@@ -13,16 +13,17 @@
   inference, and a private free-Kaggle SmolVLM2 LoRA route implemented; CORD v2
   is revision-pinned, downloaded, extracted, checksummed,
   and adapted with 800/100/100 official split counts; TruFor source and
-  licences pinned, strict output adapter implemented; 40 tests pass
+  licences pinned, strict output adapter implemented; deterministic 2,000-row
+  CORD copy-move benchmark and real GPU training path prepared; 43 tests pass
 - Active experiment: none; SMOKE-0001 completed
-- Last verified command: `.\tools\run.ps1 verify` (40 passed), followed by
-  `.\tools\run.ps1 prepare-trufor` (100 immutable CORD test inputs)
+- Last verified command: `.\tools\run.ps1 verify` (43 passed); generated and
+  validated 1,000 forged images, 1,000 exact masks, and 2,000 manifest rows
 - Last verified Git commit before current state update:
   `3d215db` (immutable leakage-safe CORD manifest)
 - Available checkpoints:
   `artifacts/experiments/SMOKE-0001/last.pt` (pipeline verification only)
 - Current metrics: smoke tests only; no research result claimed
-- Next action: obtain paired AIForge/CORD samples, build immutable joint
-  manifests, train the first real baseline, then run published/VLM comparisons
+- Next action: execute `RGB-COPYMOVE-001`, then obtain paired AIForge/CORD
+  samples and run published/VLM comparisons
 - User blockers: accept free AIForge-Doc v2 terms and provide a read-only
   Hugging Face token for genuine dataset training
