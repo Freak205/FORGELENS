@@ -12,7 +12,7 @@ from torch import Tensor, nn
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 
-from forgelens.data import FictionalDocumentFixtures, FixtureSample
+from forgelens.data import DocumentSample, FictionalDocumentFixtures
 from forgelens.evaluation import binary_metrics, pixel_iou
 from forgelens.models import TinyJointDetector
 from forgelens.training import save_checkpoint, seed_everything
@@ -22,7 +22,7 @@ EXPERIMENT_ID = "SMOKE-0001"
 SEED = 20260723
 
 
-def collate(samples: list[FixtureSample]) -> tuple[Tensor, Tensor, Tensor]:
+def collate(samples: list[DocumentSample]) -> tuple[Tensor, Tensor, Tensor]:
     """Stack fixture dataclasses into tensors."""
     return (
         torch.stack([sample.image for sample in samples]),

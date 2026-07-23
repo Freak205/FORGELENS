@@ -6,13 +6,17 @@
   2050 CUDA tensor smoke passed; strict output schema, tiny joint detector,
   classification/localization metrics, ECE, Brier score, and validation-only
   threshold selection implemented; deterministic safe fixtures, grouped split,
-  atomic checkpoints, and joint smoke training implemented; 10 tests pass
+  atomic checkpoints, joint smoke training, experiment config validation,
+  ROC/PR AUC with bootstrap intervals, explicit abstention policy, strict
+  AIForge-Doc adapter, and nine deterministic corruptions implemented; 29 tests
+  pass
 - Active experiment: none; SMOKE-0001 completed
-- Last verified command: `.venv\Scripts\python.exe scripts\train_smoke.py`
+- Last verified command: `.\tools\run.ps1 verify` (29 passed; lint/type clean)
 - Last verified Git commit: `50fde438feb396653abc0308308d01f4fd1534df`
 - Available checkpoints:
   `artifacts/experiments/SMOKE-0001/last.pt` (pipeline verification only)
 - Current metrics: smoke tests only; no research result claimed
-- Next action: add validated experiment configuration, dataset manifests,
-  evaluation artifacts, resume testing, and a research-dataset adapter
-- User blockers: none
+- Next action: implement the authentic-source adapters and end-to-end baseline
+  trainer while awaiting AIForge-Doc v2 read access
+- User blockers: accept free AIForge-Doc v2 terms and provide a read-only
+  Hugging Face token for genuine dataset training
