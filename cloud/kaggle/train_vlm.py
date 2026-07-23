@@ -13,6 +13,10 @@ subprocess.run(
     [sys.executable, "-m", "pip", "install", "--quiet", "num2words==0.5.14"],
     check=True,
 )
+subprocess.run(
+    [sys.executable, "-m", "pip", "uninstall", "--yes", "torchao"],
+    check=True,
+)
 
 import accelerate
 import datasets
