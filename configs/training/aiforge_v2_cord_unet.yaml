@@ -1,0 +1,20 @@
+experiment_id: AIFORGE-CORD-UNET-001
+hypothesis: A localization-first RGB model learns generator-specific evidence on paired GPT-Image-2 CORD forgeries.
+seed: 20260723
+device: auto
+model_name: tiny_unet_joint
+base_channels: 8
+data:
+  dataset_name: Scam-AI/AIForge-Doc-v2-cord-paired
+  dataset_version: 9fe6f52f073c01b42966d0fd0dda87db7c9725f9
+  root: F:/HYPERVERGE
+  split_manifest: configs/data/aiforge_v2_cord_paired.json
+  image_size: [256, 384]
+  group_key: source_group
+training:
+  epochs: 8
+  batch_size: 4
+  learning_rate: 0.0003
+  gradient_accumulation_steps: 1
+  mixed_precision: true
+  checkpoint_every_epochs: 1

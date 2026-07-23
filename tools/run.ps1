@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "benchmark-inference", "report-assets", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "build-cord-copy-move", "prepare-trufor")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "train-aiforge-baseline", "benchmark-inference", "report-assets", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "manifest-aiforge-cord", "build-cord-copy-move", "prepare-trufor")]
     [string]$Task
 )
 
@@ -74,6 +74,13 @@ switch ($Task) {
             "configs\training\cord_copy_move_residual.yaml"
         )
     }
+    "train-aiforge-baseline" {
+        Invoke-Python @(
+            "scripts\train_real_baseline.py",
+            "--config",
+            "configs\training\aiforge_v2_cord_unet.yaml"
+        )
+    }
     "benchmark-inference" {
         Invoke-Python @("scripts\benchmark_inference.py")
     }
@@ -116,6 +123,9 @@ switch ($Task) {
     }
     "manifest-cord" {
         Invoke-Python @("scripts\build_cord_manifest.py")
+    }
+    "manifest-aiforge-cord" {
+        Invoke-Python @("scripts\build_aiforge_cord_manifest.py")
     }
     "build-cord-copy-move" {
         Invoke-Python @("scripts\build_cord_copy_move.py")
