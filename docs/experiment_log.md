@@ -100,6 +100,24 @@
 - Decision: reject and test higher-resolution fixed high-pass residual evidence;
   add validation-only localization threshold selection
 
+## RESIDUAL-COPYMOVE-001 — high-resolution residual ablation
+
+- Timestamp: 2026-07-23
+- Hypothesis: 192×288 inputs plus fixed Laplacian/Sobel residuals preserve and
+  expose copy-paste seam evidence
+- Dataset/config: same locked split and seed; five epochs, batch 8,
+  ResidualUNetJointDetector(base=8)
+- Git commit: `ffce4cc97d1337d1631ed8f151544e05d6931da4`
+- Duration and peak VRAM: 182.20 seconds, 326.92 MiB
+- Test: ROC-AUC 0.525 [0.452, 0.610], PR-AUC 0.532 [0.441, 0.641],
+  validation-threshold pixel IoU 0.051, false-positive rate 1.0
+- Failure: neither fixed residuals nor extra resolution provided a reliable
+  ranking/localization signal on the proxy copy-move task
+- Checkpoint SHA-256:
+  `18d61a4aa7c8a3f5ad87704d4726de81d2dd3348c536824bd2e9ebeaa0aa37c3`
+- Decision: reject operationally and stop optimizing the proxy benchmark;
+  prioritize licensed AI-inpainting data
+
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
 peak VRAM, checkpoint, metrics, observations, failures, and decision.

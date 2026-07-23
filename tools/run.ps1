@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "build-cord-copy-move", "prepare-trufor")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "benchmark-inference", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "build-cord-copy-move", "prepare-trufor")]
     [string]$Task
 )
 
@@ -60,6 +60,9 @@ switch ($Task) {
             "--config",
             "configs\training\cord_copy_move_residual.yaml"
         )
+    }
+    "benchmark-inference" {
+        Invoke-Python @("scripts\benchmark_inference.py")
     }
     "cuda" {
         Invoke-Python @(

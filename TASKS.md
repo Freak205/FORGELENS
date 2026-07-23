@@ -8,6 +8,6 @@
 - [ ] M5 evidence-driven multimodal model and ablations
 - [ ] M6 free-GPU VLM LoRA/QLoRA SFT
 - [ ] M7 distribution-shift and robustness evaluation
-- [ ] M8 latency and memory optimization
+- [x] M8 latency and memory optimization
 - [ ] M9 report, demo, and portfolio packaging
 - [ ] M10 clean-install reproducibility and research-integrity audit

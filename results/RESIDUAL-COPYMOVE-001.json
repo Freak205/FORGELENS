@@ -1,0 +1,29 @@
+{
+  "experiment_id": "RESIDUAL-COPYMOVE-001",
+  "status": "completed_rejected_baseline",
+  "git_commit": "ffce4cc97d1337d1631ed8f151544e05d6931da4",
+  "seed": 20260723,
+  "dataset": "forgelens/cord-copy-move-v1",
+  "model": "ResidualUNetJointDetector(base_channels=8)",
+  "best_epoch": 5,
+  "duration_seconds": 182.19750950000162,
+  "peak_vram_mb": 326.9169921875,
+  "validation": {
+    "roc_auc": 0.536050021648407,
+    "selected_image_threshold": 0.3700000047683716,
+    "selected_pixel_threshold": 0.3199999928474426,
+    "pixel_iou": 0.047002796083688736
+  },
+  "test": {
+    "roc_auc": 0.5254999995231628,
+    "roc_auc_95_ci": [0.45210981369018555, 0.6103028655052185],
+    "pr_auc": 0.5324545288085938,
+    "pr_auc_95_ci": [0.4410562515258789, 0.6414281129837036],
+    "false_positive_rate": 1.0,
+    "forged_pixel_iou_at_0_5": 0.000008024651833693497,
+    "forged_pixel_iou_at_validation_threshold": 0.05052771419286728
+  },
+  "checkpoint_sha256": "18d61a4aa7c8a3f5ad87704d4726de81d2dd3348c536824bd2e9ebeaa0aa37c3",
+  "decision": "Reject operationally. Fixed residuals and increased resolution did not recover a reliable signal; stop optimizing the proxy benchmark and prioritize licensed AI-inpainting data.",
+  "limitations": "Traditional deterministic copy-move benchmark only; no AI-inpainting or in-the-wild claim."
+}

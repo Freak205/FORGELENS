@@ -1,0 +1,33 @@
+{
+  "benchmark_id": "LATENCY-RESIDUAL-001",
+  "git_commit": "ffce4cc97d1337d1631ed8f151544e05d6931da4",
+  "checkpoint_sha256": "18d61a4aa7c8a3f5ad87704d4726de81d2dd3348c536824bd2e9ebeaa0aa37c3",
+  "sample_id": "cord-test-0-authentic",
+  "input_shape": [
+    1,
+    3,
+    192,
+    288
+  ],
+  "warmup_iterations": 20,
+  "measured_iterations": 100,
+  "hardware": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.12.1+cu130",
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 2050"
+  },
+  "fp32": {
+    "median_latency_ms": 2.450100000714883,
+    "p95_latency_ms": 4.272699996363372,
+    "throughput_images_per_second": 408.1466061418811,
+    "peak_vram_mb": 26.99853515625
+  },
+  "amp_fp16": {
+    "median_latency_ms": 3.835399998934008,
+    "p95_latency_ms": 7.363600001554005,
+    "throughput_images_per_second": 260.7289983516543,
+    "peak_vram_mb": 27.6806640625
+  },
+  "scope": "model-forward only; excludes file decode and preprocessing"
+}
