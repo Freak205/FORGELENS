@@ -1,5 +1,5 @@
 {
-  "id": "ivsanirudh/forgelens-vlm-sft",
+  "id": "ivsanirudh/forgelens-vlm-lora-sft",
   "title": "ForgeLens VLM LoRA SFT",
   "code_file": "train_vlm.py",
   "language": "python",

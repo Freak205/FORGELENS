@@ -169,7 +169,7 @@ switch ($Task) {
                         $ProjectRoot
                     ) "artifacts\experiments\VLM-SFT-001"
                     New-Item -ItemType Directory -Path $Destination -Force | Out-Null
-                    & $Kaggle kernels output ivsanirudh/forgelens-vlm-sft `
+                    & $Kaggle kernels output ivsanirudh/forgelens-vlm-lora-sft `
                         -p $Destination
                 }
             }

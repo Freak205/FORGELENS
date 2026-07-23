@@ -9,7 +9,6 @@ import sys
 import time
 from pathlib import Path
 
-requirements_path = Path(__file__).resolve().with_name("requirements-vlm.txt")
 subprocess.run(
     [
         sys.executable,
@@ -17,8 +16,13 @@ subprocess.run(
         "pip",
         "install",
         "--quiet",
-        "-r",
-        str(requirements_path),
+        "accelerate==1.14.0",
+        "bitsandbytes==0.49.2",
+        "datasets==5.0.0",
+        "huggingface-hub==1.24.0",
+        "peft==0.19.1",
+        "transformers==5.14.1",
+        "trl==1.9.0",
     ],
     check=True,
 )
