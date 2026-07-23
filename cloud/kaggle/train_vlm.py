@@ -7,6 +7,7 @@ import sys
 import time
 from pathlib import Path
 
+requirements_path = Path(__file__).resolve().with_name("requirements-vlm.txt")
 subprocess.run(
     [
         sys.executable,
@@ -15,13 +16,14 @@ subprocess.run(
         "install",
         "--quiet",
         "-r",
-        str(Path(__file__).resolve().parents[1] / "requirements-vlm.txt"),
+        str(requirements_path),
     ],
     check=True,
 )
 
 import torch
-from datasets import load_dataset
+from datasets import Image as DatasetImage
+from datasets import Dataset, load_dataset
 from peft import LoraConfig
 from transformers import AutoProcessor, BitsAndBytesConfig
 from trl import SFTConfig, SFTTrainer
@@ -30,6 +32,68 @@ MODEL_ID = "HuggingFaceTB/SmolVLM2-2.2B-Instruct"
 MODEL_REVISION = "482adb537c021c86670beed01cd58990d01e72e4"
 INPUT_ROOT = Path(os.environ.get("FORGELENS_INPUT", "/kaggle/input/forgelens-bundle"))
 OUTPUT_ROOT = Path(os.environ.get("FORGELENS_OUTPUT", "/kaggle/working/forgelens-output"))
+
+
+def prepare_dataset(dataset_path: Path) -> Dataset:
+    """Load relative bundle paths as decoded images without random re-splitting."""
+    dataset = load_dataset("json", data_files=str(dataset_path), split="train")
+    dataset = dataset.map(
+        lambda row: {"image": str(INPUT_ROOT / row["image"])},
+        desc="Resolving private bundle image paths",
+    )
+    return dataset.cast_column("image", DatasetImage())
+
+
+def balanced_test_subset(dataset: Dataset, per_class: int = 64) -> Dataset:
+    """Select a deterministic, balanced evaluation subset."""
+    authentic = dataset.filter(lambda row: int(row["label"]) == 0).shuffle(
+        seed=20260723
+    )
+    forged = dataset.filter(lambda row: int(row["label"]) == 1).shuffle(seed=20260723)
+    count = min(per_class, len(authentic), len(forged))
+    return Dataset.from_list(
+        [
+            *[authentic[index] for index in range(count)],
+            *[forged[index] for index in range(count)],
+        ]
+    ).shuffle(seed=20260723)
+
+
+@torch.no_grad()
+def evaluate_verdicts(model: object, processor: object, dataset: Dataset) -> dict:
+    """Measure deterministic balanced verdict accuracy and macro recall."""
+    predictions: list[int] = []
+    targets: list[int] = []
+    model.eval()
+    for row in dataset:
+        messages = [row["messages"][0]]
+        inputs = processor.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt",
+        ).to(model.device)
+        output_ids = model.generate(**inputs, max_new_tokens=32, do_sample=False)
+        generated = output_ids[:, inputs["input_ids"].shape[1] :]
+        answer = processor.batch_decode(generated, skip_special_tokens=True)[0].upper()
+        predictions.append(1 if "FORGED" in answer else 0)
+        targets.append(int(row["label"]))
+    recalls = []
+    for label in (0, 1):
+        matches = [prediction == label for prediction, target in zip(predictions, targets) if target == label]
+        recalls.append(sum(matches) / len(matches))
+    return {
+        "samples": len(targets),
+        "accuracy": sum(
+            prediction == target
+            for prediction, target in zip(predictions, targets)
+        )
+        / len(targets),
+        "balanced_accuracy": sum(recalls) / 2,
+        "authentic_recall": recalls[0],
+        "forged_recall": recalls[1],
+    }
 
 
 def main() -> None:
@@ -45,8 +109,12 @@ def main() -> None:
     torch.cuda.reset_peak_memory_stats()
     started = time.perf_counter()
 
-    dataset = load_dataset("json", data_files=str(dataset_path), split="train")
-    split = dataset.train_test_split(test_size=0.1, seed=20260723)
+    dataset = prepare_dataset(dataset_path)
+    train_dataset = dataset.filter(lambda row: row["split"] == "train")
+    validation_dataset = dataset.filter(lambda row: row["split"] == "validation")
+    test_dataset = balanced_test_subset(
+        dataset.filter(lambda row: row["split"] == "test")
+    )
     processor = AutoProcessor.from_pretrained(
         MODEL_ID,
         revision=MODEL_REVISION,
@@ -97,8 +165,8 @@ def main() -> None:
     trainer = SFTTrainer(
         model=MODEL_ID,
         args=args,
-        train_dataset=split["train"],
-        eval_dataset=split["test"],
+        train_dataset=train_dataset,
+        eval_dataset=validation_dataset,
         processing_class=processor,
         peft_config=lora,
         model_init_kwargs={
@@ -107,8 +175,10 @@ def main() -> None:
             "device_map": "auto",
         },
     )
+    zero_shot = evaluate_verdicts(trainer.model, processor, test_dataset)
     resume = True if any(checkpoint.glob("checkpoint-*")) else None
     result = trainer.train(resume_from_checkpoint=resume)
+    fine_tuned = evaluate_verdicts(trainer.model, processor, test_dataset)
     adapter = OUTPUT_ROOT / "adapter"
     trainer.save_model(str(adapter))
     processor.save_pretrained(str(adapter))
@@ -119,6 +189,13 @@ def main() -> None:
         "method": "4-bit NF4 QLoRA-style PEFT SFT",
         "completion_only_loss": True,
         "dataset_rows": len(dataset),
+        "train_rows": len(train_dataset),
+        "validation_rows": len(validation_dataset),
+        "test_evaluation": {
+            "selection": "deterministic balanced subset; 64 per class maximum",
+            "zero_shot": zero_shot,
+            "fine_tuned": fine_tuned,
+        },
         "train_metrics": result.metrics,
         "duration_seconds": time.perf_counter() - started,
         "peak_vram_mb": torch.cuda.max_memory_allocated() / 1048576,

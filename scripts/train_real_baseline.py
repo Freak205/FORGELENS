@@ -368,7 +368,10 @@ def main() -> None:
         "metrics": metrics,
         "checkpoint": str(output_directory / "best.pt"),
         "limitations": (
-            "Traditional deterministic copy-move benchmark only; not evidence "
+            "CORD-only paired GPT-Image-2 benchmark; generator- and "
+            "source-domain-specific, not evidence of in-the-wild performance."
+            if "aiforge" in config.data.dataset_name.lower()
+            else "Traditional deterministic copy-move benchmark only; not evidence "
             "of AI-inpainting or in-the-wild performance."
         ),
     }

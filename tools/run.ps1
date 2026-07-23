@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "train-aiforge-baseline", "benchmark-inference", "report-assets", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "manifest-aiforge-cord", "build-cord-copy-move", "prepare-trufor")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "train-aiforge-baseline", "benchmark-inference", "report-assets", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "manifest-aiforge-cord", "build-cord-copy-move", "prepare-trufor", "prepare-vlm-bundle", "kaggle-auth-check", "kaggle-push-dataset", "kaggle-push-kernel", "kaggle-download-output")]
     [string]$Task
 )
 
@@ -132,6 +132,51 @@ switch ($Task) {
     }
     "prepare-trufor" {
         Invoke-Python @("scripts\prepare_trufor_inputs.py", "--split", "test")
+    }
+    "prepare-vlm-bundle" {
+        Invoke-Python @("scripts\prepare_vlm_bundle.py")
+    }
+    { $_ -in @(
+        "kaggle-auth-check",
+        "kaggle-push-dataset",
+        "kaggle-push-kernel",
+        "kaggle-download-output"
+    ) } {
+        $env:KAGGLE_API_TOKEN = Import-DpapiSecret (
+            Join-Path $StorageRoot "secrets\kaggle_api_token.dpapi"
+        )
+        $Kaggle = Join-Path $ProjectRoot ".venv\Scripts\kaggle.exe"
+        try {
+            switch ($Task) {
+                "kaggle-auth-check" {
+                    & $Kaggle datasets list --mine --format json
+                }
+                "kaggle-push-dataset" {
+                    & $Kaggle datasets create -p (
+                        Join-Path $ProjectRoot "artifacts\kaggle\forgelens-vlm-evidence"
+                    )
+                }
+                "kaggle-push-kernel" {
+                    & $Kaggle kernels push -p (
+                        Join-Path $ProjectRoot "cloud\kaggle"
+                    ) --accelerator NvidiaTeslaP100
+                }
+                "kaggle-download-output" {
+                    $Destination = Join-Path (
+                        $ProjectRoot
+                    ) "artifacts\experiments\VLM-SFT-001"
+                    New-Item -ItemType Directory -Path $Destination -Force | Out-Null
+                    & $Kaggle kernels output ivsanirudh/forgelens-vlm-sft `
+                        -p $Destination
+                }
+            }
+            if ($LASTEXITCODE -ne 0) {
+                throw "Kaggle command failed with exit code $LASTEXITCODE"
+            }
+        }
+        finally {
+            Remove-Item Env:KAGGLE_API_TOKEN -ErrorAction SilentlyContinue
+        }
     }
     "verify" {
         & $PSCommandPath "format-check"
