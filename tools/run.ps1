@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "train-aiforge-baseline", "benchmark-inference", "report-assets", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "manifest-aiforge-cord", "build-cord-copy-move", "prepare-trufor", "prepare-vlm-bundle", "kaggle-auth-check", "kaggle-push-dataset", "kaggle-push-kernel", "kaggle-download-output")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "train-real-baseline", "train-unet-baseline", "train-residual-baseline", "train-aiforge-baseline", "evaluate-primary", "benchmark-inference", "report-assets", "demo", "cuda", "download-aiforge-v2", "download-cord", "extract-cord", "manifest-cord", "manifest-aiforge-cord", "build-cord-copy-move", "prepare-trufor", "prepare-vlm-bundle", "kaggle-auth-check", "kaggle-push-dataset", "kaggle-push-kernel", "kaggle-download-output")]
     [string]$Task
 )
 
@@ -80,6 +80,9 @@ switch ($Task) {
             "--config",
             "configs\training\aiforge_v2_cord_unet.yaml"
         )
+    }
+    "evaluate-primary" {
+        Invoke-Python @("scripts\evaluate_primary.py")
     }
     "benchmark-inference" {
         Invoke-Python @("scripts\benchmark_inference.py")
