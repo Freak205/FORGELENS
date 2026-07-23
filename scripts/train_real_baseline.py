@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 import platform
 import subprocess
 import time
@@ -14,7 +15,7 @@ import torch
 from torch import Tensor, nn
 from torch.amp import GradScaler, autocast  # type: ignore[attr-defined]
 from torch.optim import AdamW
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from forgelens.calibration import (
     TemperatureScaler,
@@ -31,11 +32,25 @@ from forgelens.evaluation import (
     pr_auc,
     roc_auc,
 )
-from forgelens.models import TinyJointDetector
-from forgelens.training import save_checkpoint, seed_everything
+from forgelens.models import TinyJointDetector, TinyUNetJointDetector
+from forgelens.training import load_checkpoint, save_checkpoint, seed_everything
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-CONFIG_PATH = PROJECT_ROOT / "configs" / "training" / "cord_copy_move_rgb.yaml"
+DEFAULT_CONFIG_PATH = PROJECT_ROOT / "configs" / "training" / "cord_copy_move_rgb.yaml"
+JointModel = TinyJointDetector | TinyUNetJointDetector
+
+
+class CachedDocumentDataset(Dataset[DocumentSample]):
+    """In-memory resized samples to avoid repeated high-resolution PNG decode."""
+
+    def __init__(self, samples: list[DocumentSample]) -> None:
+        self.samples = samples
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, index: int) -> DocumentSample:
+        return self.samples[index]
 
 
 def collate(samples: list[DocumentSample]) -> tuple[Tensor, Tensor, Tensor]:
@@ -73,7 +88,7 @@ def localization_loss(logits: Tensor, targets: Tensor) -> Tensor:
 
 
 def make_loader(
-    dataset: ManifestDocumentDataset,
+    dataset: Dataset[DocumentSample],
     batch_size: int,
     seed: int,
     *,
@@ -91,7 +106,7 @@ def make_loader(
 
 
 def train_epoch(
-    model: TinyJointDetector,
+    model: JointModel,
     loader: DataLoader[DocumentSample],
     optimizer: AdamW,
     scaler: GradScaler,
@@ -125,7 +140,7 @@ def train_epoch(
 
 @torch.no_grad()
 def predict(
-    model: TinyJointDetector,
+    model: JointModel,
     loader: DataLoader[DocumentSample],
     device: torch.device,
     use_amp: bool,
@@ -151,7 +166,15 @@ def predict(
 
 
 def main() -> None:
-    config = ExperimentConfig.from_yaml(CONFIG_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH)
+    arguments = parser.parse_args()
+    config_path = (
+        arguments.config
+        if arguments.config.is_absolute()
+        else PROJECT_ROOT / arguments.config
+    )
+    config = ExperimentConfig.from_yaml(config_path)
     seed_everything(config.seed)
     if config.device == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA requested but unavailable")
@@ -163,7 +186,7 @@ def main() -> None:
     )
     use_amp = config.training.mixed_precision and device.type == "cuda"
     manifest_path = PROJECT_ROOT / config.data.split_manifest
-    datasets = {
+    source_datasets = {
         split: ManifestDocumentDataset(
             manifest_path,
             config.data.root,
@@ -171,6 +194,10 @@ def main() -> None:
             config.data.image_size,
         )
         for split in ("train", "validation", "test")
+    }
+    datasets = {
+        split: CachedDocumentDataset([dataset[index] for index in range(len(dataset))])
+        for split, dataset in source_datasets.items()
     }
     loaders = {
         split: make_loader(
@@ -181,7 +208,12 @@ def main() -> None:
         )
         for split, dataset in datasets.items()
     }
-    model = TinyJointDetector(config.base_channels).to(device)
+    model: JointModel
+    if config.model_name == "tiny_joint":
+        model = TinyJointDetector(config.base_channels)
+    else:
+        model = TinyUNetJointDetector(config.base_channels)
+    model = model.to(device)
     optimizer = AdamW(
         model.parameters(),
         lr=config.training.learning_rate,
@@ -231,6 +263,7 @@ def main() -> None:
                 resolved_config,
             )
 
+    load_checkpoint(output_directory / "best.pt", model, optimizer)
     validation_logits, validation_labels, _, _ = predict(
         model,
         loaders["validation"],

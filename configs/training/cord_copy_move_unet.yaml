@@ -1,0 +1,20 @@
+experiment_id: UNET-COPYMOVE-001
+hypothesis: Skip connections and top-region evidence pooling improve localized copy-move detection over global average pooling.
+seed: 20260723
+device: auto
+model_name: tiny_unet_joint
+base_channels: 12
+data:
+  dataset_name: forgelens/cord-copy-move
+  dataset_version: v1
+  root: F:/HYPERVERGE
+  split_manifest: configs/data/cord_copy_move_v1.json
+  image_size: [128, 192]
+  group_key: source_group
+training:
+  epochs: 5
+  batch_size: 12
+  learning_rate: 0.0005
+  gradient_accumulation_steps: 1
+  mixed_precision: true
+  checkpoint_every_epochs: 1

@@ -61,6 +61,27 @@
   the old upstream stack in an isolated container when official weights become
   reachable; do not claim baseline metrics before paired forged data exists
 
+## RGB-COPYMOVE-001 — global-pooled RGB baseline
+
+- Timestamp: 2026-07-23
+- Hypothesis: a tiny joint RGB model learns a non-trivial traditional-tampering
+  baseline on real CORD documents
+- Dataset: `forgelens/cord-copy-move-v1`, 1,600/200/200 samples, official
+  source-group-preserving splits
+- Config: five epochs, 128×192, batch 12, seed 20260723, mixed precision,
+  TinyJointDetector(base=12), AdamW
+- Git commit: `6e90f4f8ea855051ef3afdbced101c1c0b3f2617`
+- Hardware: RTX 2050; PyTorch 2.12.1+cu130
+- Duration and peak VRAM: 703.16 seconds, 92.98 MiB
+- Test: ROC-AUC 0.548 [0.468, 0.628], PR-AUC 0.566 [0.470, 0.659], pixel IoU
+  0.191, ECE 0.015, Brier 0.248
+- Failure: validation-selected threshold produced a 99% test false-positive
+  rate; global average pooling diluted local tampering evidence
+- Checkpoint SHA-256:
+  `b5c997d33aa151b6a007efa5e6e9ae6ffcd66a1eecec7ffa3dc0769011f89305`
+- Decision: reject operationally and test a skip-connected localizer with
+  explicit top-region evidence aggregation
+
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
 peak VRAM, checkpoint, metrics, observations, failures, and decision.

@@ -42,7 +42,7 @@ class ExperimentConfig(BaseModel):
     hypothesis: str = Field(min_length=10)
     seed: int = Field(ge=0)
     device: Literal["auto", "cpu", "cuda"] = "auto"
-    model_name: Literal["tiny_joint"] = "tiny_joint"
+    model_name: Literal["tiny_joint", "tiny_unet_joint"] = "tiny_joint"
     base_channels: int = Field(default=16, ge=2)
     data: DataConfig
     training: TrainingConfig

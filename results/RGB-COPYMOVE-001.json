@@ -1,0 +1,36 @@
+{
+  "experiment_id": "RGB-COPYMOVE-001",
+  "status": "completed_rejected_baseline",
+  "git_commit": "6e90f4f8ea855051ef3afdbced101c1c0b3f2617",
+  "seed": 20260723,
+  "dataset": "forgelens/cord-copy-move-v1",
+  "split_counts": {
+    "train": 1600,
+    "validation": 200,
+    "test": 200
+  },
+  "model": "TinyJointDetector(base_channels=12)",
+  "epochs": 5,
+  "duration_seconds": 703.1638781999936,
+  "peak_vram_mb": 92.9794921875,
+  "validation": {
+    "roc_auc_final": 0.5528500080108643,
+    "selected_threshold": 0.429999977350235,
+    "temperature": 1.187261700630188
+  },
+  "test": {
+    "roc_auc": 0.5476000308990479,
+    "roc_auc_95_ci": [0.4678625166416168, 0.6280294060707092],
+    "pr_auc": 0.5664154815673829,
+    "pr_auc_95_ci": [0.4697349965572357, 0.6589030027389526],
+    "f1": 0.6644295323491607,
+    "false_positive_rate": 0.9900000095367432,
+    "false_negative_rate": 0.009999999776482582,
+    "ece_15_bin": 0.01506498921662569,
+    "brier": 0.24848943948745728,
+    "forged_pixel_iou_at_0_5": 0.19119438529014587
+  },
+  "checkpoint_sha256": "b5c997d33aa151b6a007efa5e6e9ae6ffcd66a1eecec7ffa3dc0769011f89305",
+  "decision": "Reject as an operational baseline: confidence interval includes chance and validation-selected threshold yields 99% test false positives.",
+  "limitations": "Traditional deterministic copy-move benchmark only; no AI-inpainting or in-the-wild claim."
+}
