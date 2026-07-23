@@ -13,11 +13,15 @@ and a free-GPU VLM LoRA route.
 
 ## Verified state
 
-- 46 tests; formatting, linting, and strict typing pass.
-- Three genuine RTX 2050 training runs are preserved as negative results.
+- 50 tests; formatting, linting, and strict typing pass.
+- Four genuine RTX 2050 training runs are preserved as negative results.
 - Best proxy ROC-AUC: 0.548 (95% CI 0.468–0.628)—rejected, not advertised.
+- Paired GPT-Image-2 CORD test ROC-AUC: 0.502 (95% CI
+  0.444–0.558)—rejected, not advertised.
 - Batch-one residual-model inference: 2.45 ms median, 27 MiB peak VRAM.
-- Primary AIForge-Doc v2 and VLM results await free gated-data access.
+- AIForge-Doc v2 is revision-pinned and fully downloaded under
+  `F:\HYPERVERGE`; the private Kaggle VLM kernel is submitted but the account
+  currently launches it without CUDA.
 
 ## Reproduce
 

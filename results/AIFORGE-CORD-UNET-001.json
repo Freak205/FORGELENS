@@ -1,0 +1,42 @@
+{
+  "experiment_id": "AIFORGE-CORD-UNET-001",
+  "status": "rejected_negative_result",
+  "dataset": "Scam-AI/AIForge-Doc-v2 CORD-only paired subset",
+  "aiforge_revision": "9fe6f52f073c01b42966d0fd0dda87db7c9725f9",
+  "cord_revision": "7f0115a4b758a71d6473b8d085751692da2fef98",
+  "split_counts": {"train": 1258, "validation": 314, "test": 394},
+  "model": "TinyUNetJointDetector(base_channels=8)",
+  "seed": 20260723,
+  "git_commit": "0ea95f8b642df8d7c75ff2bc71416740fda31534",
+  "best_epoch": 7,
+  "validation_roc_auc": 0.5012170672416687,
+  "test_roc_auc": {
+    "estimate": 0.5019583106040955,
+    "lower": 0.44448843598365784,
+    "upper": 0.5579401254653931,
+    "bootstrap_samples": 500
+  },
+  "test_pr_auc": {
+    "estimate": 0.5076522052590617,
+    "lower": 0.4368233382701874,
+    "upper": 0.578172504901886,
+    "bootstrap_samples": 500
+  },
+  "test_false_positive_rate": 1.0,
+  "test_forged_pixel_iou_at_validation_threshold": 0.019891733303666115,
+  "temperature": 46.17571258544922,
+  "test_ece_15_bin": 0.0001398324966430664,
+  "test_brier": 0.24999818205833435,
+  "duration_seconds": 565.9085258999985,
+  "peak_vram_mb": 280.9775390625,
+  "checkpoint_sha256": "769991b8698c5c01fba47dfab93e2323fc952a7ca8298b1a39fbbc89a7e0af93",
+  "evaluation": {
+    "few_shot_groups": [1, 5, 10, 25],
+    "full_validation_roc_auc": 0.5021515488624573,
+    "risk_coverage_error_at_50_percent": 0.49238577485084534,
+    "corruptions": 9,
+    "worst_corruption_auc": 0.49956196546554565,
+    "best_corruption_auc": 0.5032982230186462
+  },
+  "decision": "Reject for operational use; the small RGB model learned no reliable ranking or localization signal."
+}

@@ -1,34 +1,37 @@
-# Portfolio Materials — Hold Until Primary Results
+# Portfolio Materials — Evidence-Checked Draft
 
 ## Recruiter summary
 
 Built ForgeLens, a typed and tested PyTorch research system spanning licensed
 data provenance, leakage-safe splits, CUDA training, localization, calibration,
 robustness, published-baseline isolation, strict inference, and a free-GPU VLM
-LoRA route. Preserved three negative experiments instead of presenting
-unsupported improvements.
+LoRA route. Preserved four negative experiments, including a paired
+GPT-Image-2 benchmark, instead of presenting unsupported improvements.
 
 ## Resume bullets
 
-- Engineered a 46-test PyTorch document-forensics pipeline with joint
+- Engineered a 50-test PyTorch document-forensics pipeline with joint
   classification/localization, validation-only calibration, abstention,
   bootstrap intervals, and reproducible CUDA checkpoints.
 - Built a licence-audited 2,000-sample CORD benchmark and ran three controlled
   ablations, rejecting models whose 95% ROC-AUC intervals included chance.
+- Ran a leakage-safe 1,966-sample paired GPT-Image-2/CORD experiment with
+  bootstrap CIs, few-shot calibration, risk–coverage, and nine corruptions;
+  rejected the chance-level model rather than overstating its F1.
 - Profiled RTX 2050 batch-one inference at 2.45 ms median and 27 MiB peak VRAM;
-  packaged a revision-pinned free-Kaggle SmolVLM2 QLoRA workflow.
+  packaged a revision-pinned free-Kaggle SmolVLM2 LoRA workflow.
 
-Do not publish performance-focused claims until AIForge and VLM experiments
-complete.
+Do not present ForgeLens as an accurate detector; the strongest claim is the
+reproducible research/evaluation system and its evidence-based stop decisions.
 
 ## LinkedIn draft
 
 Built ForgeLens, an evidence-first PyTorch document-forensics research system.
 It covers licence-audited data, leakage-safe splits, joint detection and
 localization, calibration, abstention, robustness, CUDA profiling, and a
-free-GPU VLM LoRA route. Three baseline experiments were genuine negative
-results; I rejected them because bootstrap intervals included chance rather
-than turning weak metrics into a claim.
+free-GPU VLM LoRA route. Four experiments, including paired GPT-Image-2
+forgeries, were genuine negative results; I rejected them because bootstrap
+intervals included chance rather than turning weak metrics into a claim.
 
 ## Interview explanation
 
@@ -38,4 +41,6 @@ than turning weak metrics into a claim.
 - Describe the ablation decision: global RGB → U-Net → fixed residuals.
 - Emphasize the stop decision: proxy optimization ended when evidence showed
   it did not represent AI inpainting.
-- Finish with the gated primary experiment and the packaged SmolVLM2 LoRA job.
+- Finish with the paired GPT-Image-2 negative result and safe public-CORD
+  SmolVLM2 LoRA proxy, clearly noting that Kaggle GPU activation remains an
+  external prerequisite.

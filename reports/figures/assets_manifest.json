@@ -94,7 +94,8 @@
     }
   ],
   "figure_sha256": {
-    "ablation_auc.svg": "c3581c8c7adb7da85621aa31de46a45e18035d0ae9ae8ac909d52f9c3999cbda",
+    "ablation_auc.svg": "e283d8a26dd3fe17c06c061c0b6e705e784330d11e6bd4e56f56e56fa638adf3",
+    "assets_manifest.json": "7668a57a4accc3c231efff86a2d5498ffc8e673496503fca13836abc40d34676",
     "calibration_residual.svg": "90abea6908d120a0e7209e99e2701fba177c120b46af726e87c01c4822ba7859",
     "failure_1_input.png": "6fa12d9e6030540f11dc5c7c84d0ab23f934313b30c75722221dd7cfe7fbdb58",
     "failure_1_prediction.png": "c542e649c7d6bce9366dd6bac0b826ae9bb904d920161f93b8abe5fa7500cbcd",

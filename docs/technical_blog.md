@@ -1,4 +1,4 @@
-# What Three Failed Detectors Taught Me About Document Forgery Research
+# What Four Failed Detectors Taught Me About Document Forgery Research
 
 ForgeLens began with the smallest defensible model, not a dashboard or a large
 VLM. I built strict provenance, source-group-safe splits, joint image/mask
@@ -11,6 +11,8 @@ residual model did not fix the problem. I rejected all three.
 
 The important result is methodological: copy-move derivatives are useful for
 testing plumbing, but not a credible substitute for AI-inpainted receipt edits.
-The next valid experiment must use licensed generator-shift data. ForgeLens
+The licensed paired GPT-Image-2 experiment then reached only ROC-AUC 0.502
+(95% CI 0.444–0.558) and pixel IoU 0.020. That ruled out a tempting story that
+real inpainting data alone would rescue the tiny RGB architecture. ForgeLens
 therefore treats uncertainty and negative results as first-class artifacts,
 and its demo defaults to manual review.

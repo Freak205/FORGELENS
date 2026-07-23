@@ -77,17 +77,18 @@ def ablation_svg() -> str:
         ("RGB", 0.5476, 0.4679, 0.6280),
         ("U-Net", 0.5090, 0.4360, 0.5870),
         ("Residual", 0.5255, 0.4521, 0.6103),
+        ("AIForge", 0.5020, 0.4445, 0.5579),
     ]
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420">',
         '<rect width="100%" height="100%" fill="#0d1117"/>',
-        '<text x="360" y="30" fill="#e6edf3" font-family="system-ui" font-size="20" text-anchor="middle">Proxy benchmark ROC-AUC (95% bootstrap CI)</text>',
+        '<text x="360" y="30" fill="#e6edf3" font-family="system-ui" font-size="20" text-anchor="middle">Verified detector ROC-AUC (95% bootstrap CI)</text>',
         '<path d="M80 330H680" stroke="#8b949e"/>',
         '<path d="M80 280H680" stroke="#d29922" stroke-dasharray="6 5"/>',
         '<text x="70" y="285" fill="#d29922" text-anchor="end">0.5</text>',
     ]
     for index, (name, estimate, lower, upper) in enumerate(records):
-        x = 180 + index * 190
+        x = 120 + index * 175
         y = 380 - estimate * 200
         low_y = 380 - lower * 200
         high_y = 380 - upper * 200

@@ -118,6 +118,52 @@
 - Decision: reject operationally and stop optimizing the proxy benchmark;
   prioritize licensed AI-inpainting data
 
+## AIFORGE-CORD-UNET-001 — paired GPT-Image-2 baseline
+
+- Timestamp: 2026-07-24
+- Hypothesis: a localization-first RGB model learns generator-specific evidence
+  on paired GPT-Image-2 CORD forgeries
+- Dataset: `Scam-AI/AIForge-Doc-v2` revision
+  `9fe6f52f073c01b42966d0fd0dda87db7c9725f9`, CORD-only paired subset;
+  1,258/314/394 train/validation/test samples
+- Split policy: preserve the official AIForge test partition, derive validation
+  only from official training, and keep each authentic/forged pair together
+- Config: eight epochs, 256×384, batch 4, seed 20260723, mixed precision,
+  TinyUNetJointDetector(base=8), AdamW
+- Git commit: `0ea95f8b642df8d7c75ff2bc71416740fda31534`
+- Hardware: RTX 2050; PyTorch 2.12.1+cu130
+- Duration and peak VRAM: 565.91 seconds, 280.98 MiB
+- Test: ROC-AUC 0.502 [0.444, 0.558], PR-AUC 0.508 [0.437, 0.578],
+  validation-threshold pixel IoU 0.020, false-positive rate 1.0
+- Calibration/robustness: N={1,5,10,25} group calibration did not change
+  ranking; 50% coverage error was 0.492; severity-3 corruption AUCs ranged
+  0.500–0.503 across nine capture proxies
+- Checkpoint SHA-256:
+  `769991b8698c5c01fba47dfab93e2323fc952a7ca8298b1a39fbbc89a7e0af93`
+- Failure: the small RGB model learned neither reliable paired classification
+  nor localization evidence; low ECE reflects near-constant 0.5 predictions,
+  not useful confidence
+- Decision: reject operationally; preserve the negative result and do not
+  convert its F1 of 0.667 into a performance claim
+
+## VLM-SFT-001 — private free-Kaggle route
+
+- Timestamp: 2026-07-24
+- Model: `HuggingFaceTB/SmolVLM2-2.2B-Instruct` revision
+  `482adb537c021c86670beed01cd58990d01e72e4`, Apache 2.0
+- Dataset policy: code-only kernel; download public pinned CORD v2 in the
+  session and generate a deterministic paired copy-move proxy; never upload the
+  gated AIForge derivative
+- Kernel: private `ivsanirudh/forgelens-vlm-lora-sft`
+- Compatibility work: removed unavailable network installs, bitsandbytes, and
+  TRL; version 5 uses Kaggle-installed Transformers and PEFT
+- Result: Kaggle launched version 5 without a CUDA device despite the requested
+  free P100 accelerator, so training correctly stopped before model download
+  or optimization
+- Decision: external account/runtime blocker. Enable a GPU accelerator for the
+  private notebook, then rerun the already-submitted version; do not claim VLM
+  results until `record.json` is downloaded and audited
+
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
 peak VRAM, checkpoint, metrics, observations, failures, and decision.

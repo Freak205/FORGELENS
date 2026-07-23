@@ -3,10 +3,10 @@
 ## Abstract
 
 ForgeLens is a tested PyTorch prototype for calibrated document-forgery
-detection and pixel localization under generator shift. Three local models were
-genuinely trained on a leakage-safe CORD-derived proxy; all were rejected
-because confidence intervals included chance and thresholds caused near-total
-false positives. Primary AI-inpainting and VLM claims await gated AIForge data.
+detection and pixel localization under generator shift. Four local models were
+genuinely trained, including a paired GPT-Image-2/CORD experiment; all were
+rejected because confidence intervals included chance and thresholds caused
+near-total false positives.
 
 ## Scope, data, and method
 
@@ -24,6 +24,7 @@ thresholds and temperatures are selected on validation only.
 | RGB-COPYMOVE-001 | 0.548 (0.468–0.628) | 0.191 at 0.5 | Reject |
 | UNET-COPYMOVE-001 | 0.509 (0.436–0.587) | 0.000 at 0.5 | Reject |
 | RESIDUAL-COPYMOVE-001 | 0.525 (0.452–0.610) | 0.051 validation-selected | Reject |
+| AIFORGE-CORD-UNET-001 | 0.502 (0.444–0.558) | 0.020 validation-selected | Reject |
 
 The negative results show copy-move is not a credible proxy for AI inpainting.
 Exact records and checkpoint hashes are in `results/`.
@@ -35,10 +36,13 @@ Exact records and checkpoint hashes are in `results/`.
 ## Calibration, robustness, published and VLM baselines
 
 Temperature scaling, ECE, Brier score, abstention, bootstrap intervals, and
-nine deterministic corruptions are implemented. TruFor source/licences are
-pinned, but its official weight host timed out, so reproduction is not claimed.
-A private free-Kaggle SmolVLM2 4-bit LoRA job is packaged and awaits authorized
-AIForge data.
+nine deterministic corruptions were evaluated on the paired AIForge test set.
+At 50% coverage, selective error remained 0.492; corruption AUCs stayed near
+chance (0.500–0.503). TruFor source/licences are pinned, but its official
+weight host timed out, so reproduction is not claimed. A private free-Kaggle
+SmolVLM2 mixed-precision LoRA proxy job uses public CORD only and must not be interpreted
+as AI-inpainting performance. Its submitted version currently stops because
+Kaggle launches the account session without CUDA; no VLM result is claimed.
 
 ## Efficiency
 
@@ -47,8 +51,9 @@ On RTX 2050, batch-one 192×288 inference measured 2.45 ms median FP32 and
 
 ## Limitations and ethics
 
-No current checkpoint is operationally acceptable. No AI-inpainting,
-cross-generator, VLM, or in-the-wild performance claim is made. ForgeLens is
+No current checkpoint is operationally acceptable. The single-generator
+AIForge result is negative; no cross-generator, VLM, or in-the-wild performance
+claim is made. ForgeLens is
 not forensic proof and excludes real identity documents, biometric collection,
 and operational forgery generation.
 
