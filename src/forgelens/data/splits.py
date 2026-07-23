@@ -36,7 +36,5 @@ def grouped_split(
     return GroupedSplit(
         train=tuple(unique_groups[validation_count + test_count :]),
         validation=tuple(unique_groups[:validation_count]),
-        test=tuple(
-            unique_groups[validation_count : validation_count + test_count]
-        ),
+        test=tuple(unique_groups[validation_count : validation_count + test_count]),
     )

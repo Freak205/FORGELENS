@@ -105,5 +105,7 @@ class AIForgeDocForgeryDataset(Dataset[DocumentSample]):
             label=torch.tensor(1.0),
             sample_id=sample_id,
             source_group=f"{source_dataset}:{source_image}",
-            metadata={key: value for key, value in record.items() if key != "_sample_id"},
+            metadata={
+                key: value for key, value in record.items() if key != "_sample_id"
+            },
         )

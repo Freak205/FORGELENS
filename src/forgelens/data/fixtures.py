@@ -58,9 +58,7 @@ class FictionalDocumentFixtures(Dataset[DocumentSample]):
             right = min(left + self.width // 4, self.width - 5)
             bottom = min(top + 7, self.height - 5)
             mask[:, top:bottom, left:right] = 1.0
-            noise = torch.rand(
-                (3, bottom - top, right - left), generator=generator
-            )
+            noise = torch.rand((3, bottom - top, right - left), generator=generator)
             image[:, top:bottom, left:right] = 0.2 + 0.35 * noise
 
         return DocumentSample(

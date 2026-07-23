@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda")]
+    [ValidateSet("sync", "format", "format-check", "lint", "typecheck", "test", "verify", "smoke-train", "cuda", "download-aiforge-v2")]
     [string]$Task
 )
 
@@ -49,6 +49,9 @@ switch ($Task) {
             "-c",
             "import torch; assert torch.cuda.is_available(); print(torch.__version__, torch.cuda.get_device_name(0))"
         )
+    }
+    "download-aiforge-v2" {
+        Invoke-Python @("scripts\download_aiforge.py", "v2")
     }
     "verify" {
         & $PSCommandPath "format-check"
