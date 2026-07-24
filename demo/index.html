@@ -1,16 +1,129 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ForgeLens research demo</title><style>
-body{font:16px system-ui;max-width:960px;margin:40px auto;padding:0 20px;background:#0d1117;color:#e6edf3}
-.warning{border:1px solid #d29922;background:#2b2106;padding:14px;border-radius:8px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}img{max-width:100%;background:white}
-pre{white-space:pre-wrap;background:#161b22;padding:16px}</style>
-<h1>ForgeLens</h1><p class="warning"><strong>Research prototype—not forensic proof.</strong>
-Current checkpoint failed operational validation and defaults to manual review. Use only non-sensitive documents.</p>
-<input id="file" type="file" accept="image/png,image/jpeg,image/webp"><button id="run">Analyze locally</button>
-<div class="grid"><div><h2>Input</h2><img id="input"></div><div><h2>Predicted mask</h2><img id="mask"></div></div>
-<h2>Structured output</h2><pre id="result">Select an approved image.</pre><script>
-const f=document.querySelector("#file"),r=document.querySelector("#result");
-document.querySelector("#run").onclick=async()=>{if(!f.files[0])return;
-document.querySelector("#input").src=URL.createObjectURL(f.files[0]);r.textContent="Analyzing…";
-const q=await fetch("/predict",{method:"POST",headers:{"Content-Type":f.files[0].type},body:f.files[0]});
-const d=await q.json();r.textContent=JSON.stringify(d,null,2);if(d.mask_url)document.querySelector("#mask").src=d.mask_url;};</script></html>
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ForgeLens research demo</title>
+<style>
+  :root{color-scheme:dark}
+  body{font:16px/1.5 system-ui;max-width:960px;margin:40px auto;padding:0 20px;background:#0d1117;color:#e6edf3}
+  button,input{font:inherit}.warning{border:1px solid #d29922;background:#2b2106;padding:14px;border-radius:8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;align-items:start}
+  img{display:block;max-width:100%;background:white;border-radius:8px}
+  pre{white-space:pre-wrap;background:#161b22;padding:16px;border-radius:8px;overflow:auto}
+  .explanation{margin-top:18px;padding:20px;background:#161b22;border:1px solid #30363d;border-radius:12px}
+  .explanation h3{margin:0 0 8px;font-size:22px}.explanation p{margin:8px 0}
+  .verdict{display:inline-block;padding:6px 11px;border-radius:999px;font-weight:750;letter-spacing:.02em}
+  .uncertain{background:#3b2f08;color:#f2cc60}.authentic{background:#12351f;color:#7ee787}.forged{background:#48191d;color:#ff7b72}
+  .plain-grid{display:grid;gap:10px;margin-top:14px}.plain-row{padding-top:10px;border-top:1px solid #30363d}
+  .label{display:block;color:#8b949e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+  .important{margin-top:16px!important;padding:12px;background:#251a07;border-left:4px solid #d29922;border-radius:4px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+</style>
+<h1>ForgeLens</h1>
+<p class="warning"><strong>Research prototype—not forensic proof.</strong>
+Current checkpoint failed operational validation and defaults to manual review.
+Use only non-sensitive documents.</p>
+<input id="file" type="file" accept="image/png,image/jpeg,image/webp">
+<button id="run">Analyze locally</button>
+
+<div class="grid">
+  <div>
+    <h2>Input</h2>
+    <img id="input" alt="Uploaded document">
+  </div>
+  <div>
+    <h2>Predicted mask</h2>
+    <img id="mask" alt="Model-highlighted areas">
+    <section class="explanation" aria-live="polite">
+      <h3>What this means</h3>
+      <div id="plain">
+        Choose an image and select <strong>Analyze locally</strong>. A simple
+        explanation will appear here.
+      </div>
+    </section>
+  </div>
+</div>
+
+<h2>Technical details</h2>
+<pre id="result">Select an approved image.</pre>
+<script>
+const fileInput=document.querySelector("#file");
+const result=document.querySelector("#result");
+const plain=document.querySelector("#plain");
+const runButton=document.querySelector("#run");
+const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+})[char]);
+
+function plainExplanation(data){
+  const verdict=data.verdict||"uncertain";
+  const verdictText={
+    authentic:"No strong warning detected",
+    forged:"Warning signs detected",
+    uncertain:"The model cannot decide"
+  }[verdict]||"The model cannot decide";
+  const summary={
+    authentic:"The model did not find a strong warning. This does not prove the document is genuine.",
+    forged:"The model noticed patterns that may look edited. This does not prove the document is forged.",
+    uncertain:"The model is not confident enough to call this document genuine or forged."
+  }[verdict]||"The model is not confident enough to make a decision.";
+  const risk=Number(data.calibrated_risk);
+  const riskText=Number.isFinite(risk)
+    ? `${(risk*100).toFixed(1)} out of 100 — an internal warning score, not the real chance of forgery.`
+    : "No usable internal warning score was returned.";
+  const tamper=data.tamper_type&&data.tamper_type!=="unknown"
+    ? `Possible edit type: ${escapeHtml(data.tamper_type)}.`
+    : "The model could not identify a specific type of edit.";
+  const fields=Array.isArray(data.affected_fields)&&data.affected_fields.length
+    ? `Possible affected fields: ${data.affected_fields.map(escapeHtml).join(", ")}.`
+    : "The model could not confidently name any affected field.";
+  const regions=Array.isArray(data.evidence_regions)?data.evidence_regions.length:0;
+  const regionText=regions
+    ? `The mask contains ${regions} broad highlighted area${regions===1?"":"s"}. White pixels only show where the model looked suspicious; they may simply be text, borders, or image edges.`
+    : "No area was highlighted confidently.";
+  const action=data.recommended_action==="manual_review"
+    ? "Have a person compare this image with the original document. Do not automatically accept or reject it."
+    : "Treat the result as a research hint and verify it manually.";
+  plain.innerHTML=`
+    <span class="verdict ${escapeHtml(verdict)}">${escapeHtml(verdictText)}</span>
+    <p>${escapeHtml(summary)}</p>
+    <div class="plain-grid">
+      <div class="plain-row"><span class="label">Warning score</span>${riskText}</div>
+      <div class="plain-row"><span class="label">Possible edit</span>${tamper}</div>
+      <div class="plain-row"><span class="label">Document fields</span>${fields}</div>
+      <div class="plain-row"><span class="label">White mask areas</span>${regionText}</div>
+      <div class="plain-row"><span class="label">What you should do</span>${action}</div>
+    </div>
+    <p class="important"><strong>Important:</strong> This model failed operational
+    validation. Its score and white mask are not proof of forgery.</p>`;
+}
+
+runButton.onclick=async()=>{
+  if(!fileInput.files[0])return;
+  document.querySelector("#input").src=URL.createObjectURL(fileInput.files[0]);
+  result.textContent="Analyzing…";
+  plain.textContent="Analyzing the image…";
+  runButton.disabled=true;
+  try{
+    const response=await fetch("/predict",{
+      method:"POST",
+      headers:{"Content-Type":fileInput.files[0].type},
+      body:fileInput.files[0]
+    });
+    const data=await response.json();
+    result.textContent=JSON.stringify(data,null,2);
+    if(!response.ok||data.error){
+      plain.textContent=`The image could not be analyzed: ${data.error||"unknown error"}`;
+      return;
+    }
+    if(data.mask_url)document.querySelector("#mask").src=data.mask_url;
+    plainExplanation(data);
+  }catch(error){
+    result.textContent=String(error);
+    plain.textContent="The local demo could not complete the analysis. Check the terminal and try again.";
+  }finally{
+    runButton.disabled=false;
+  }
+};
+</script>
+</html>
