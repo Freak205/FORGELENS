@@ -19,7 +19,8 @@ GPT-Image-2 benchmark, instead of presenting unsupported improvements.
   bootstrap CIs, few-shot calibration, risk–coverage, and nine corruptions;
   rejected the chance-level model rather than overstating its F1.
 - Profiled RTX 2050 batch-one inference at 2.45 ms median and 27 MiB peak VRAM;
-  packaged a revision-pinned free-Kaggle SmolVLM2 LoRA workflow.
+  completed a revision-pinned free-Kaggle SmolVLM2 LoRA workflow with a hashed
+  37 MB adapter and audited zero-shot/SFT proxy comparison.
 
 Do not present ForgeLens as an accurate detector; the strongest claim is the
 reproducible research/evaluation system and its evidence-based stop decisions.
@@ -42,5 +43,5 @@ intervals included chance rather than turning weak metrics into a claim.
 - Emphasize the stop decision: proxy optimization ended when evidence showed
   it did not represent AI inpainting.
 - Finish with the paired GPT-Image-2 negative result and safe public-CORD
-  SmolVLM2 LoRA proxy, clearly noting that Kaggle GPU activation remains an
-  external prerequisite.
+  SmolVLM2 LoRA proxy, clearly separating its small proxy improvement from
+  AI-inpainting or production claims.

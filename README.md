@@ -20,8 +20,10 @@ and a free-GPU VLM LoRA route.
   0.444–0.558)—rejected, not advertised.
 - Batch-one residual-model inference: 2.45 ms median, 27 MiB peak VRAM.
 - AIForge-Doc v2 is revision-pinned and fully downloaded under
-  `F:\HYPERVERGE`; the private Kaggle VLM kernel is submitted but the account
-  currently launches it without CUDA.
+  `F:\HYPERVERGE`.
+- Private Kaggle SmolVLM2 LoRA completed on a public CORD proxy: balanced
+  accuracy moved from 0.500 zero-shot to 0.547 after SFT on 64 balanced test
+  examples. This is workflow evidence, not an AI-inpainting claim.
 
 ## Reproduce
 

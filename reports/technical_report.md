@@ -40,9 +40,10 @@ nine deterministic corruptions were evaluated on the paired AIForge test set.
 At 50% coverage, selective error remained 0.492; corruption AUCs stayed near
 chance (0.500–0.503). TruFor source/licences are pinned, but its official
 weight host timed out, so reproduction is not claimed. A private free-Kaggle
-SmolVLM2 mixed-precision LoRA proxy job uses public CORD only and must not be interpreted
-as AI-inpainting performance. Its submitted version currently stops because
-Kaggle launches the account session without CUDA; no VLM result is claimed.
+SmolVLM2 mixed-precision LoRA proxy job completed on public CORD: balanced
+accuracy moved from 0.500 zero-shot to 0.547 after one SFT epoch on a
+64-example balanced proxy test. This verifies the workflow but must not be
+interpreted as AI-inpainting or operational performance.
 
 ## Efficiency
 

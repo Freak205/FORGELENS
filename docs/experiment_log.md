@@ -155,14 +155,22 @@
   session and generate a deterministic paired copy-move proxy; never upload the
   gated AIForge derivative
 - Kernel: private `ivsanirudh/forgelens-vlm-lora-sft`
-- Compatibility work: removed unavailable network installs, bitsandbytes, and
-  TRL; version 5 uses Kaggle-installed Transformers and PEFT
-- Result: Kaggle launched version 5 without a CUDA device despite the requested
-  free P100 accelerator, so training correctly stopped before model download
-  or optimization
-- Decision: external account/runtime blocker. Enable a GPU accelerator for the
-  private notebook, then rerun the already-submitted version; do not claim VLM
-  results until `record.json` is downloaded and audited
+- Compatibility work: enabled verified-account GPU/internet access, selected a
+  T4 supported by the installed PyTorch build, removed stale optional
+  `torchao`, and used Kaggle-installed Transformers/PEFT
+- Dataset: 448 paired proxy rows; 256 train, 64 validation, and a deterministic
+  balanced 64-example test subset
+- Training: one epoch, 16 optimizer steps, mean loss 2.104; 6,607.09 seconds;
+  peak allocated VRAM 7,038.97 MiB
+- Zero-shot: balanced accuracy 0.500, authentic recall 1.000, forged recall
+  0.000
+- LoRA SFT: balanced accuracy 0.547, authentic recall 0.719, forged recall
+  0.375
+- Adapter: 37,162,792 bytes; SHA-256
+  `009134875e92c4c356e8bb05b952ba4d1013394b19ed4170fe941327f7f77f9f`
+- Decision: retain as a verified free-GPU workflow result. The 0.047 balanced
+  accuracy increase on 64 proxy examples is descriptive only and is not
+  AI-inpainting or operational-performance evidence.
 
 Each entry must include ID, timestamp, hypothesis, dataset version, split
 manifest, resolved config, model, seed, Git commit, hardware, training time,
