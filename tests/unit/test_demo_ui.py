@@ -2,9 +2,9 @@ from pathlib import Path
 
 
 def test_demo_has_plain_language_result_card() -> None:
-    html = (
-        Path(__file__).resolve().parents[2] / "demo" / "index.html"
-    ).read_text(encoding="utf-8")
+    html = (Path(__file__).resolve().parents[2] / "demo" / "index.html").read_text(
+        encoding="utf-8"
+    )
 
     assert 'id="plain"' in html
     assert "What this means" in html
