@@ -9,12 +9,15 @@
 [![Tests](https://img.shields.io/badge/tests-51%20passing-2EA44F)](#quality-gates)
 [![Type checked](https://img.shields.io/badge/mypy-strict-2A6DB0)](https://mypy-lang.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-live-000000?logo=vercel)](https://forgelens-git-main-freak05.vercel.app/)
 
 **A reproducible PyTorch research system for image-level forgery risk, pixel-level
 tamper localization, calibrated abstention, and evidence-grounded experimentation.**
 
 [Quick start](#quick-start) · [Architecture](#architecture) ·
-[Verified results](#verified-results) · [Demo](#local-research-demo) ·
+[Verified results](#verified-results) ·
+[Live demo](https://forgelens-git-main-freak05.vercel.app/) ·
+[Local demo](#local-research-demo) ·
 [Documentation](#documentation) · [Responsible use](#responsible-use)
 
 </div>
@@ -173,6 +176,9 @@ test suite.
 Open [http://127.0.0.1:7860](http://127.0.0.1:7860).
 
 ### Deploy from GitHub to Vercel
+
+Live deployment:
+[forgelens-git-main-freak05.vercel.app](https://forgelens-git-main-freak05.vercel.app/)
 
 The repository includes a static frontend and a Python 3.14 Vercel Function.
 Import `Freak205/FORGELENS` in Vercel, keep the project root as `./`, and leave
