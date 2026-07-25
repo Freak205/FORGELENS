@@ -6,10 +6,7 @@
   "functions": {
     "api/predict.py": {
       "maxDuration": 300,
-      "memory": 2048,
-      "includeFiles": [
-        "artifacts/experiments/RESIDUAL-COPYMOVE-001/best.pt"
-      ],
+      "includeFiles": "artifacts/experiments/RESIDUAL-COPYMOVE-001/best.pt",
       "excludeFiles": "{tests/**,reports/**,docs/**,cloud/**,configs/**,scripts/**,tools/**}"
     }
   },
