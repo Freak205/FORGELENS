@@ -172,6 +172,25 @@ test suite.
 
 Open [http://127.0.0.1:7860](http://127.0.0.1:7860).
 
+### Deploy from GitHub to Vercel
+
+The repository includes a static frontend and a Python 3.14 Vercel Function.
+Import `Freak205/FORGELENS` in Vercel, keep the project root as `./`, and leave
+the detected build settings unchanged. No application secrets or environment
+variables are required. Every push to `main` creates a production deployment;
+other branches and pull requests create preview deployments.
+
+The hosted route accepts PNG, JPEG, and WebP images up to 4 MiB, matching
+Vercel's request-size ceiling with safety margin. The local demo retains its
+10 MiB limit. New Vercel projects use Fluid Compute and may package this
+PyTorch function as a Large Function. If an older Vercel project reports a
+function-size error, set `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` for Preview first,
+redeploy, and then enable it for Production after verification.
+
+Deployment remains a research demonstration, not a production inference
+service or forensic proof. The bundled checkpoint failed operational
+validation and all outputs require manual review.
+
 ## Local research demo
 
 The dependency-light demo:

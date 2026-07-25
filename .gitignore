@@ -2,6 +2,13 @@
 .cache/
 /data/
 /artifacts/
+!/artifacts/
+/artifacts/*
+!/artifacts/experiments/
+/artifacts/experiments/*
+!/artifacts/experiments/RESIDUAL-COPYMOVE-001/
+/artifacts/experiments/RESIDUAL-COPYMOVE-001/*
+!/artifacts/experiments/RESIDUAL-COPYMOVE-001/best.pt
 /checkpoints/
 /outputs/
 *.py[cod]

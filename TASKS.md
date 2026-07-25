@@ -11,3 +11,4 @@
 - [x] M8 latency and memory optimization
 - [ ] M9 report, demo, and portfolio packaging
 - [ ] M10 clean-install reproducibility and research-integrity audit
+- [x] GitHub-to-Vercel research demo packaging

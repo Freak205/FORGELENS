@@ -240,6 +240,7 @@ source = { editable = "." }
 dependencies = [
     { name = "huggingface-hub" },
     { name = "numpy" },
+    { name = "pillow" },
     { name = "pydantic" },
     { name = "pyyaml" },
     { name = "structlog" },
@@ -265,6 +266,7 @@ requires-dist = [
     { name = "kaggle", marker = "extra == 'cloud'", specifier = "==2.2.3" },
     { name = "mypy", marker = "extra == 'dev'", specifier = "==1.15.0" },
     { name = "numpy", specifier = "==2.3.2" },
+    { name = "pillow", specifier = "==12.3.0" },
     { name = "pydantic", specifier = "==2.13.4" },
     { name = "pytest", marker = "extra == 'dev'", specifier = "==9.1.1" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = "==6.0.0" },

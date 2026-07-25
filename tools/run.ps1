@@ -50,11 +50,11 @@ switch ($Task) {
     }
     "format-check" {
         Invoke-Python @(
-            "-m", "ruff", "format", "--check", "src", "tests", "scripts", "demo"
+            "-m", "ruff", "format", "--check", "src", "tests", "scripts", "demo", "api"
         )
     }
-    "lint" { Invoke-Python @("-m", "ruff", "check", "src", "tests", "scripts", "demo") }
-    "typecheck" { Invoke-Python @("-m", "mypy", "src", "scripts", "demo") }
+    "lint" { Invoke-Python @("-m", "ruff", "check", "src", "tests", "scripts", "demo", "api") }
+    "typecheck" { Invoke-Python @("-m", "mypy", "src", "scripts", "demo", "api") }
     "test" { Invoke-Python @("-m", "pytest") }
     "smoke-train" { Invoke-Python @("scripts\train_smoke.py") }
     "train-real-baseline" {

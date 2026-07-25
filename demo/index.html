@@ -24,7 +24,9 @@
 Current checkpoint failed operational validation and defaults to manual review.
 Use only non-sensitive documents.</p>
 <input id="file" type="file" accept="image/png,image/jpeg,image/webp">
-<button id="run">Analyze locally</button>
+<button id="run">Analyze image</button>
+<p>Maximum upload: 4 MiB. Images are processed only for this request and are
+not retained by the hosted demo.</p>
 
 <div class="grid">
   <div>
@@ -100,6 +102,11 @@ function plainExplanation(data){
 
 runButton.onclick=async()=>{
   if(!fileInput.files[0])return;
+  if(fileInput.files[0].size>4*1024*1024){
+    result.textContent="Image must be 4 MiB or smaller.";
+    plain.textContent="Choose a smaller PNG, JPEG, or WebP image.";
+    return;
+  }
   document.querySelector("#input").src=URL.createObjectURL(fileInput.files[0]);
   result.textContent="Analyzing…";
   plain.textContent="Analyzing the image…";
