@@ -42,7 +42,7 @@ function Import-DpapiSecret {
 
 switch ($Task) {
     "sync" {
-        & $Uv sync --extra dev --python $Python
+        & $Uv sync --extra dev --extra research --python $Python
         if ($LASTEXITCODE -ne 0) { throw "uv sync failed" }
     }
     "format" {

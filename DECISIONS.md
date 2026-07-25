@@ -46,3 +46,14 @@ Docker environment. Its free licence is limited to informational and nonprofit
 use. Do not redistribute the source or weights, do not use an unverified weight
 mirror, and do not load its pickle-based checkpoint inside the ForgeLens
 environment.
+
+## D-0007 — Vercel inference runtime
+
+Deploy the rejected residual U-Net baseline through a numerically verified ONNX
+export and CPU ONNX Runtime. Keep PyTorch, torchvision, Hugging Face Hub, and
+other research-only libraries in the optional `research` dependency set. The
+original CPU PyTorch function dependencies measured 817.76 MiB before source
+files and produced Vercel's 820.66 MB bundle failure. The locked ONNX Runtime
+function measures 126.59 MiB uncompressed while preserving the `POST /predict`
+contract, thresholds, calibration, mask, and safety language. Research assets
+remain in the repository but are excluded from uploads and function tracing.

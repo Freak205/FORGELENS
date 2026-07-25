@@ -1,0 +1,34 @@
+# Research and development assets are not build inputs for the hosted demo.
+artifacts
+checkpoints
+cloud
+configs
+data
+docs
+notebooks
+outputs
+reports
+results
+scripts
+tests
+tools
+
+# Local and generated state.
+.mypy_cache
+.pytest_cache
+.ruff_cache
+**/__pycache__
+*.ipynb
+*.py[cod]
+*.pt
+*.pth
+*.ckpt
+
+# Repository-only coordination metadata.
+.pre-commit-config.yaml
+AGENTS.md
+BLOCKERS.md
+CITATION.cff
+DECISIONS.md
+PROJECT_STATE.md
+TASKS.md

@@ -14,7 +14,7 @@
   is revision-pinned, downloaded, extracted, checksummed,
   and adapted with 800/100/100 official split counts; TruFor source and
   licences pinned, strict output adapter implemented; deterministic 2,000-row
-  CORD copy-move benchmark and real GPU training path prepared; 43 tests pass
+  CORD copy-move benchmark and real GPU training path prepared; 56 tests pass
 - Active experiment: `RESIDUAL-COPYMOVE-001` completed and rejected; test
   ROC-AUC 0.525 [0.452, 0.610], 100% false positives, validation-threshold
   pixel IoU 0.051
@@ -24,7 +24,9 @@
   strict `uncertain/manual_review`, and a mask for a licensed CORD test image
 - Deployment packaging: Git-connected Vercel configuration, Python 3.14
   serverless prediction handler, 4 MiB upload guard, embedded mask response,
-  security headers, and explicit checkpoint inclusion added
+  security headers, and a numerically verified ONNX export added; the
+  inference-only Linux bundle measures 126.59 MiB versus 820.66 MB before
+  removing PyTorch from Vercel's base dependency set
 - Report verification: actual reliability/ablation figures and three
   qualitative failures generated; clean wheel install and isolated model
   forward passed under `F:\HYPERVERGE\.tmp\clean-audit-605bb90`

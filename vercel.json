@@ -6,8 +6,8 @@
   "functions": {
     "api/predict.py": {
       "maxDuration": 300,
-      "includeFiles": "artifacts/experiments/RESIDUAL-COPYMOVE-001/best.pt",
-      "excludeFiles": "{tests/**,reports/**,docs/**,cloud/**,configs/**,scripts/**,tools/**}"
+      "includeFiles": "api/model.onnx",
+      "excludeFiles": "{.git/**,.venv/**,.cache/**,artifacts/**,checkpoints/**,cloud/**,configs/**,data/**,demo/**,docs/**,notebooks/**,outputs/**,reports/**,results/**,scripts/**,src/**,tests/**,tools/**,*.md,*.cff,LICENSE,pyproject.toml,uv.lock,vercel.json,.vercelignore}"
     }
   },
   "headers": [

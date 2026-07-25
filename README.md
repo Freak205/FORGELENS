@@ -182,14 +182,15 @@ other branches and pull requests create preview deployments.
 
 The hosted route accepts PNG, JPEG, and WebP images up to 4 MiB, matching
 Vercel's request-size ceiling with safety margin. The local demo retains its
-10 MiB limit. New Vercel projects use Fluid Compute and may package this
-PyTorch function as a Large Function. If an older Vercel project reports a
-function-size error, set `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` for Preview first,
-redeploy, and then enable it for Production after verification.
+10 MiB limit. The hosted function uses an ONNX export of the same trained
+baseline and ONNX Runtime instead of shipping the PyTorch research runtime.
+Its measured Linux function content is 126.59 MiB, leaving 373.41 MiB below
+Vercel's standard 500 MiB Python limit. PyTorch and all training dependencies
+remain available through the local `research` extra but are not installed by
+Vercel.
 
-Deployment remains a research demonstration, not a production inference
-service or forensic proof. The bundled checkpoint failed operational
-validation and all outputs require manual review.
+Deployment remains a research demonstration, not forensic proof. The exported
+model failed operational validation and all outputs require manual review.
 
 ## Local research demo
 
